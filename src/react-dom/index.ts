@@ -1,7 +1,7 @@
 import { TReactElement } from "../interface";
 
 
-export function render(reactElement: TReactElement, rootNode: Element | Text | DocumentFragment){
+export function render(reactElement: TReactElement.Jsx, rootNode: Element | Text | DocumentFragment){
   const { type, props }= reactElement
   const { children, ...attributes }= props
   let dom: Element | Text | DocumentFragment

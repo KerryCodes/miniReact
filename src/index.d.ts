@@ -1,11 +1,6 @@
-declare module JSX {  
+declare namespace JSX {  
   interface IntrinsicElements {
     [key: string]: any
   }
+  
 }
-
-
-declare namespace React {
-  type FC= Function
-}
-

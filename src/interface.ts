@@ -1,13 +1,27 @@
-export type TReactElementType= "TEXT_ELEMENT" | string | React.FC
-
-export interface TTReactElementProps{
-  [key: string]: any,
-  children: TReactElement[] | [],
+export namespace TReactElement {
+  export type Type = "TEXT_ELEMENT" | string | FC
+  export type FC = Function
+  
+  export interface Jsx{
+    type: Type,
+    props: Props,
+  }
+  
+  export interface Props{
+    [key: string]: any,
+    children: Jsx[],
+  }
 }
 
-export interface TReactElement{
-  type: TReactElementType,
-  props: TTReactElementProps,
+
+export namespace TReact{
+  export interface Props{
+    [key: string]: any,
+    child?: {
+      type: 'Fragment',
+      props: {
+        children: TReactElement.Jsx[],
+      },
+    },
+  }
 }
-
-

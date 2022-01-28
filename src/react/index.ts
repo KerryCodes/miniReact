@@ -1,15 +1,16 @@
-import { TReactElement, TReactElementType, TTReactElementProps } from "../interface";
+import { TReactElement } from "../interface"
 
 
 export function createElement(
-  type: TReactElementType, 
-  props: TTReactElementProps, 
-  ...children: TReactElement[]
-): TReactElement{
-  if(typeof type === 'function'){
-    return type({
+  type: TReactElement.Type, 
+  props: TReactElement.Props, 
+  ...children: TReactElement.Jsx[]
+): TReactElement.Jsx{
+  if (typeof type === 'function') {
+    const FunctionComponent= type
+    return FunctionComponent({
       ...props, 
-      children: {
+      child: {
         type: 'Fragment',
         props: { children },
       }
@@ -19,19 +20,19 @@ export function createElement(
       type,
       props: {
         ...props,
-        children: children.map(child => typeof child === "object" ? child : createTextElement(child)),
+        children: children.map(item => typeof item === "object" ? item : createTextElement(item)),
       },
     }
   }
 }
 
 
-function createTextElement(text: string | boolean): TReactElement{
+function createTextElement(text: string | boolean): TReactElement.Jsx{
   return {
     type: "TEXT_ELEMENT",
     props: {
       nodeValue: (typeof text === 'boolean' || text === undefined) ? '' : text,
-      children: Array(0),
+      children: [],
     },
   }
 }

@@ -16,8 +16,9 @@ module.exports = merge(common, {
         static: { //托管静态资源文件
           directory: path.join(__dirname, "../public"),
         },
-        client: { //在浏览器端打印编译进度
-          progress: true,
+        client: { 
+            logging: "none",
+            progress: true, //在浏览器端打印编译进度
         },
     },
 });

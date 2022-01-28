@@ -18,6 +18,3 @@ export default function App(){
     </div>
   )
 }
-
-
-console.log('App:', <App />);

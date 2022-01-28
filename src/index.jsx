@@ -4,4 +4,6 @@ import * as ReactDOM from './react-dom'
 import App from './App';
 
 
-ReactDOM.render(<App />, document.getElementById("root"))
+const app = <App />
+console.log('App:', app);
+ReactDOM.render(app, document.getElementById("root"))
