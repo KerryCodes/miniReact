@@ -5,7 +5,8 @@
   "description": "实现一个简易版的React",
   "scripts": {
     "start": "webpack-dev-server --config webpack/start.js",
-    "build": "webpack --config webpack/build.js"
+    "build": "webpack --config webpack/build.js",
+    "tsc": "tsc"
   },
   "repository": {
     "type": "git"
