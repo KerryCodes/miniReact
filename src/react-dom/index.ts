@@ -1,10 +1,18 @@
-import { TReactElement } from "../interface";
+import { TFiber, TNode, TReactElement } from "../interface";
+import schedule from '../schedule';
 
 
-export function render(reactElement: TReactElement.Jsx, rootNode: Element | Text | DocumentFragment){
-  const { type, props }= reactElement
+function render(reactElement: TReactElement.Jsx, rootNode: TNode){
+  const dom= createDom(reactElement)
+  reactElement.props.children.map(item => render(item, dom))
+  rootNode.appendChild(dom)
+}
+
+
+function createDom(fiber: TFiber | TReactElement.Jsx) {
+  const { type, props }= fiber
   const { children, ...attributes }= props
-  let dom: Element | Text | DocumentFragment
+  let dom: TNode
 
   switch(type){
     case 'TEXT_ELEMENT':
@@ -21,6 +29,20 @@ export function render(reactElement: TReactElement.Jsx, rootNode: Element | Text
     //@ts-ignore
     dom[key]= attributes[key]
   })
-  props.children.map(item => render(item, dom))
-  rootNode.appendChild(dom)
+
+  return dom
 }
+
+
+function concurrentRender(element: TReactElement.Jsx, container: TNode) {
+  const nextUnitOfWork = {
+    dom: container,
+    props: {
+      children: [element],
+    },
+  }
+  schedule.startNextUnitOfWork(nextUnitOfWork)
+}
+
+
+export default { render, createDom, concurrentRender }

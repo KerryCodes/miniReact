@@ -1,7 +1,7 @@
 import { TReactElement } from "../interface"
 
 
-export function createElement(
+function createElement(
   type: TReactElement.Type, 
   props: TReactElement.Props, 
   ...children: TReactElement.Jsx[]
@@ -15,12 +15,12 @@ export function createElement(
         props: { children },
       }
     })
-  }else{
+  } else {
     return {
       type,
       props: {
         ...props,
-        children: children.map(item => typeof item === "object" ? item : createTextElement(item)),
+        children: children.flat().map(item => typeof item === "object" ? item : createTextElement(item)),
       },
     }
   }
@@ -36,3 +36,6 @@ function createTextElement(text: string | boolean): TReactElement.Jsx{
     },
   }
 }
+
+
+export default { createElement }

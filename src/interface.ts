@@ -1,3 +1,6 @@
+export type TNode = Element | Text | DocumentFragment
+
+
 export namespace TReactElement {
   export type Type = "TEXT_ELEMENT" | string | FC
   export type FC = Function
@@ -24,4 +27,12 @@ export namespace TReact{
       },
     },
   }
+}
+
+
+export interface TFiber{
+  type?: TReactElement.Type,
+  props: TReactElement.Props,
+  parent?: TFiber,
+  dom: TNode,
 }

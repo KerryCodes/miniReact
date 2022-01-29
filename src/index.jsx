@@ -1,13 +1,10 @@
 /** @jsx React.createElement */
-import * as React from './react'
-import * as ReactDOM from './react-dom'
+import React from './react';
+import ReactDOM from './react-dom';
 import App from './App';
-import * as schedule from './schedule'
-
-
-schedule.openConcurrentMode()
 
 
 const app = <App />
 console.log('App:', app);
-ReactDOM.render(app, document.getElementById("root"))
+// ReactDOM.render(app, document.getElementById("root"))
+ReactDOM.concurrentRender(app, document.getElementById("root"))
