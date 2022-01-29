@@ -1,28 +1,43 @@
-export function scheduleDeferredCallback() {
-  // requestIdleCallback(callback0, { timeout: 10000 })
-  requestAnimationFrame(callback1)
+const yieldInterval= 5
+let startTime= 0
+const deadline= {
+  get didTimeout(){
+    return this.getCurrentTime() - startTime >= yieldInterval
+  },
+  timeRemaining(){
+    return yieldInterval - (this.getCurrentTime() - startTime)
+  },
+  getCurrentTime(){
+    return performance.now()
+  }
+}
+const taskStore: any={
+  nextTask: null,
 }
 
-window.addEventListener('message', e => {
-  if (e.source === window && e.data.from === 'me') {
-    const { timestamp }= e.data
-    console.log('e:', timestamp, performance.now()-timestamp);
-    
-  }
-  
-})
 
-function callback0(deadline: IdleDeadline) {
-  console.log('requestIdleCallback/deadline:', deadline.didTimeout, 'requestIdleCallback/timeRemaining:', deadline.timeRemaining());
-  
+const channel= new MessageChannel()
+channel.port1.onmessage= e => {
+  startTime= performance.now()
+  const hasMoreWork= workLoop(deadline)
+  if(hasMoreWork){ 
+    requestAnimationFrame(schedulePerformWorkUntilDeadline)
+  }
+}
+function schedulePerformWorkUntilDeadline(){
+  channel.port2.postMessage(null)
 }
 
-function callback1(timestamp: DOMHighResTimeStamp) {
-  console.log('requestAnimationFrame/timestamp:', timestamp);
-  const arr= []
-  for (let i = 0; i < 10000000; i++){
-    arr.push(i)
+
+function workLoop(deadline: IdleDeadline){
+  while(!deadline.didTimeout && taskStore.nextTask){
+    taskStore.nextTask= taskStore.nextTask()
   }
-  window.postMessage({ from: 'me', timestamp })
-  // requestAnimationFrame(callback1)
+  return !!taskStore.nextTask
+}
+
+
+export function requestHostCallback(task: () => void) {
+  taskStore.nextTask= task
+  requestAnimationFrame(schedulePerformWorkUntilDeadline)
 }
