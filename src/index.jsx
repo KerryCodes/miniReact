@@ -2,6 +2,10 @@
 import * as React from './react'
 import * as ReactDOM from './react-dom'
 import App from './App';
+import * as schedule from './schedule'
+
+
+schedule.openConcurrentMode()
 
 
 const app = <App />

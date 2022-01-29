@@ -11,33 +11,45 @@ const deadline= {
     return performance.now()
   }
 }
-const taskStore: any={
-  nextTask: null,
-}
-
-
+let nextUnitOfWork: Function= null
+let hostCallback: (deadline: IdleDeadline) => boolean = null
 const channel= new MessageChannel()
-channel.port1.onmessage= e => {
+channel.port1.onmessage= e => performWorkUntilDeadline()
+
+
+function performWorkUntilDeadline(){
   startTime= performance.now()
-  const hasMoreWork= workLoop(deadline)
-  if(hasMoreWork){ 
-    requestAnimationFrame(schedulePerformWorkUntilDeadline)
-  }
+  const hasMoreWork= hostCallback(deadline)
+  requestScheduleIdleCallback(hostCallback)
 }
+
+
 function schedulePerformWorkUntilDeadline(){
   channel.port2.postMessage(null)
 }
 
 
 function workLoop(deadline: IdleDeadline){
-  while(!deadline.didTimeout && taskStore.nextTask){
-    taskStore.nextTask= taskStore.nextTask()
+  let shouldYield = false
+  while(nextUnitOfWork && !shouldYield){
+    nextUnitOfWork= nextUnitOfWork()
+    shouldYield= deadline.timeRemaining() < 1
   }
-  return !!taskStore.nextTask
+  return !!nextUnitOfWork
 }
 
 
-export function requestHostCallback(task: () => void) {
-  taskStore.nextTask= task
+function requestScheduleIdleCallback(workLoop: (deadline: IdleDeadline) => boolean){
+  hostCallback= workLoop
   requestAnimationFrame(schedulePerformWorkUntilDeadline)
+}
+
+
+export function openConcurrentMode(){
+  requestScheduleIdleCallback(workLoop)
+}
+
+
+export function startConcurrentWork(task: any){
+  nextUnitOfWork= task
 }

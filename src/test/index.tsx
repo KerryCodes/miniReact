@@ -6,7 +6,7 @@ import * as schedule from '../schedule'
 export function Aa(props: TReact.Props){
   const { id, child } = props
 
-  schedule.requestHostCallback(bigTask)
+  schedule.startConcurrentWork(bigTask)
 
   return <div id={id}>A{child}</div>
 }
