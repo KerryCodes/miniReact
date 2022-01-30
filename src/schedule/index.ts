@@ -1,8 +1,6 @@
 import commit from "../commit";
-import { performUnitOfWork } from "../fiber";
+import { performUnitOfWork, rootFiberNode } from "../fiber";
 import { TFiber } from "../interface";
-import ReactDOM, { rootFiber } from '../react-dom';
-
 
 
 const yieldInterval= 5
@@ -55,9 +53,10 @@ function workLoop(deadline: IdleDeadline): boolean{
 }
 
 
-function startNextUnitOfWork(rootFiber: TFiber){
-  nextUnitOfWork = rootFiber
+function startNextUnitOfWork(rootFiber: TFiber) {
   if (!isMessageLooping) {
+    rootFiberNode.workInProgress= rootFiber
+    nextUnitOfWork = rootFiber
     isMessageLooping = true
     requestScheduleIdleCallback(workLoop)
   }

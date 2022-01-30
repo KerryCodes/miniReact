@@ -1,34 +1,44 @@
-import { TFiber, TReactElement } from "../interface";
-import ReactDOM from '../react-dom';
+import diff from "../diff";
+import { TFiber, TReactElement, TRootFiberNode } from "../interface";
 
 
-export class Fiber implements TFiber{
+const rootFiberNode: TRootFiberNode = {
+  dom: null,
+  current: null,
+  workInProgress: null,
+  firstEffect: null,
+  currentEffect: null,
+}
+
+const deletions: TFiber[]= []
+
+
+class Fiber implements TFiber{
   type: TReactElement.Type
   props: TReactElement.Props
   dom: Element= null
   parent: TFiber
   sibling: TFiber
+  alternate: TFiber
+  effectTag: "UPDATE" | "PLACEMENT" | "DELETION"
   constructor(element: TReactElement.Jsx, parent: TFiber, preSibling?: TFiber) {
     this.type = element.type
     this.props = element.props
     this.parent = parent
-    if(preSibling){
-      preSibling.sibling= this
-    }
+    if(preSibling){ preSibling.sibling= this }
+    this.alternate = parent.alternate?.child
   }
 }
 
 
-export function performUnitOfWork(fiber: TFiber): TFiber {
-  // TODO add dom node
-  if (!fiber.dom) {
-    fiber.dom= ReactDOM.createDom(fiber)
-  }
+function performUnitOfWork(fiber: TFiber): TFiber {
   // TODO create new fibers
   const { children }= fiber.props
   let preFiber: TFiber
+  diff(fiber)
   for(let i= 0; i < children.length; i++){
     preFiber= new Fiber(children[i], fiber, preFiber)
+    diff(preFiber)
     if(i === 0){ fiber.child= preFiber }
   }
   // TODO return next unit of work
@@ -43,3 +53,6 @@ export function performUnitOfWork(fiber: TFiber): TFiber {
     nextFiber= nextFiber.parent
   }
 }
+
+
+export { rootFiberNode, deletions, Fiber, performUnitOfWork }

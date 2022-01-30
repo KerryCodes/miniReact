@@ -31,10 +31,27 @@ export namespace TReact{
 
 
 export interface TFiber{
-  type?: TReactElement.Type,
+  type: TReactElement.Type,
   props: TReactElement.Props,
   dom: TNode,
-  parent?: TFiber,
+  parent: TFiber,
   sibling?: TFiber,
   child?: TFiber,
+  alternate: TFiber,
+  effectTag: 'UPDATE' | 'PLACEMENT' | 'DELETION',
+}
+
+
+export interface TRootFiberNode{
+  dom: Element,
+  current: TFiber,
+  workInProgress: TFiber,
+  firstEffect: TEffect,
+  currentEffect: TEffect,
+}
+
+
+export interface TEffect{
+  fiber: TFiber,
+  nextEffect: TEffect,
 }

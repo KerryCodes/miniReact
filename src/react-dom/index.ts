@@ -1,8 +1,6 @@
+import { Fiber, rootFiberNode } from "../fiber";
 import { TFiber, TNode, TReactElement } from "../interface";
 import schedule from '../schedule';
-
-
-let rootFiber: TFiber
 
 
 function render(reactElement: TReactElement.Jsx, rootNode: TNode){
@@ -37,7 +35,7 @@ function createDom(fiber: TFiber | TReactElement.Jsx) {
 }
 
 
-function createRoot(rootNode: TNode){
+function createRoot(rootNode: Element){
   return {
     render(element: TReactElement.Jsx){
       concurrentRender(element, rootNode)
@@ -46,16 +44,12 @@ function createRoot(rootNode: TNode){
 }
 
 
-function concurrentRender(element: TReactElement.Jsx, rootNode: TNode) {
-  rootFiber = {
-    dom: rootNode,
-    props: {
-      children: [element],
-    },
-  }
+function concurrentRender(element: TReactElement.Jsx, rootNode: Element) {
+  //@ts-ignore
+  const rootFiber= new Fiber(element, rootFiberNode)
+  rootFiberNode.dom = rootNode
   schedule.startNextUnitOfWork(rootFiber)
 }
 
 
 export default { render, createDom, createRoot }
-export { rootFiber }
