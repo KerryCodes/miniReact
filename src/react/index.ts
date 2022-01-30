@@ -8,13 +8,7 @@ function createElement(
 ): TReactElement.Jsx{
   if (typeof type === 'function') {
     const FunctionComponent= type
-    return FunctionComponent({
-      ...props, 
-      child: {
-        type: 'Fragment',
-        props: { children },
-      }
-    })
+    return FunctionComponent({ ...props, children })
   } else {
     return {
       type,

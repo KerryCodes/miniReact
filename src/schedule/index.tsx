@@ -79,8 +79,8 @@ function performUnitOfWork(fiber: TFiber): TFiber {
 }
 
 
-function startNextUnitOfWork(fiber: TFiber){
-  nextUnitOfWork = fiber
+function startNextUnitOfWork(rootFiber: TFiber){
+  nextUnitOfWork = rootFiber
   if (!isMessageLooping) {
     isMessageLooping = true
     requestScheduleIdleCallback(workLoop)

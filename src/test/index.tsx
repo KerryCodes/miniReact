@@ -3,7 +3,7 @@ import { TReact } from '../interface'
 
 
 export function Aa(props: TReact.Props){
-  const { id, child } = props
+  const { children, ...rest } = props
 
-  return <span id={id}>A{child}</span>
+  return <span {...rest}>A{children}</span>
 }
