@@ -1,4 +1,5 @@
 import { TFiber, TReactElement } from "../interface";
+import ReactDOM from '../react-dom';
 
 
 export class Fiber implements TFiber{
@@ -14,5 +15,31 @@ export class Fiber implements TFiber{
     if(preSibling){
       preSibling.sibling= this
     }
+  }
+}
+
+
+export function performUnitOfWork(fiber: TFiber): TFiber {
+  // TODO add dom node
+  if (!fiber.dom) {
+    fiber.dom= ReactDOM.createDom(fiber)
+  }
+  // TODO create new fibers
+  const { children }= fiber.props
+  let preFiber: TFiber
+  for(let i= 0; i < children.length; i++){
+    preFiber= new Fiber(children[i], fiber, preFiber)
+    if(i === 0){ fiber.child= preFiber }
+  }
+  // TODO return next unit of work
+  if(fiber.child){
+    return fiber.child
+  }
+  let nextFiber= fiber
+  while(nextFiber){
+    if(nextFiber.sibling){
+      return nextFiber.sibling
+    }
+    nextFiber= nextFiber.parent
   }
 }

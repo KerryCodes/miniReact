@@ -2,6 +2,9 @@ import { TFiber, TNode, TReactElement } from "../interface";
 import schedule from '../schedule';
 
 
+let rootFiber: TFiber
+
+
 function render(reactElement: TReactElement.Jsx, rootNode: TNode){
   const dom= createDom(reactElement)
   reactElement.props.children.map(item => render(item, dom))
@@ -44,14 +47,15 @@ function createRoot(rootNode: TNode){
 
 
 function concurrentRender(element: TReactElement.Jsx, rootNode: TNode) {
-  const nextUnitOfWork = {
+  rootFiber = {
     dom: rootNode,
     props: {
       children: [element],
     },
   }
-  schedule.startNextUnitOfWork(nextUnitOfWork)
+  schedule.startNextUnitOfWork(rootFiber)
 }
 
 
 export default { render, createDom, createRoot }
+export { rootFiber }

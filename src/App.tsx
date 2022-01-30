@@ -8,7 +8,7 @@ export default function App(){
     <div className="layout">
       <input />
       {
-        Array(10).fill(0).map(item => (
+        Array(1000).fill(0).map(item => (
           <Aa className='aaa'>
             <strong>hello world!</strong>
           </Aa>
