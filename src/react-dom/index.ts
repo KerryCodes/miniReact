@@ -34,9 +34,18 @@ function createDom(fiber: TFiber | TReactElement.Jsx) {
 }
 
 
-function concurrentRender(element: TReactElement.Jsx, container: TNode) {
+function createRoot(rootNode: TNode){
+  return {
+    render(element: TReactElement.Jsx){
+      concurrentRender(element, rootNode)
+    }
+  }
+}
+
+
+function concurrentRender(element: TReactElement.Jsx, rootNode: TNode) {
   const nextUnitOfWork = {
-    dom: container,
+    dom: rootNode,
     props: {
       children: [element],
     },
@@ -45,4 +54,4 @@ function concurrentRender(element: TReactElement.Jsx, container: TNode) {
 }
 
 
-export default { render, createDom, concurrentRender }
+export default { render, createDom, createRoot }

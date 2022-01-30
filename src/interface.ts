@@ -33,6 +33,8 @@ export namespace TReact{
 export interface TFiber{
   type?: TReactElement.Type,
   props: TReactElement.Props,
-  parent?: TFiber,
   dom: TNode,
+  parent?: TFiber,
+  sibling?: TFiber,
+  child?: TFiber,
 }

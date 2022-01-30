@@ -1,3 +1,4 @@
+import { Fiber } from "../fiber";
 import { TFiber } from "../interface";
 import ReactDOM from '../react-dom';
 
@@ -31,7 +32,7 @@ channel.port1.onmessage = e => {
   } else {
     isMessageLooping= false
   }
-  // console.log('new');
+  console.log('new');
 }
 
 
@@ -56,39 +57,24 @@ function performUnitOfWork(fiber: TFiber): TFiber {
   if (!fiber.dom) {
     fiber.dom= ReactDOM.createDom(fiber)
   }
-  if (fiber.parent) {
-    fiber.parent.dom.appendChild(fiber.dom)
-  }
+  fiber.parent?.dom.appendChild(fiber.dom)
   // TODO create new fibers
-  const elements = fiber.props.children
-  let index = 0
-  let prevSibling = null
-  while (index < elements.length) {
-    const element = elements[index]
-    const newFiber = {
-      type: element.type,
-      props: element.props,
-      parent: fiber,
-      dom: null,
-    }
-    if (index === 0) {
-      fiber.child = newFiber
-    } else {
-      prevSibling.sibling = newFiber
-    }
-    prevSibling = newFiber
-    index++
+  const { children }= fiber.props
+  let preFiber: TFiber
+  for(let i= 0; i < children.length; i++){
+    preFiber= new Fiber(children[i], fiber, preFiber)
+    if(i === 0){ fiber.child= preFiber }
   }
   // TODO return next unit of work
-  if (fiber.child) {
+  if(fiber.child){
     return fiber.child
   }
-  let nextFiber = fiber
-  while (nextFiber) {
-    if (nextFiber.sibling) {
+  let nextFiber= fiber
+  while(nextFiber){
+    if(nextFiber.sibling){
       return nextFiber.sibling
     }
-    nextFiber = nextFiber.parent
+    nextFiber= nextFiber.parent
   }
 }
 
@@ -102,4 +88,4 @@ function startNextUnitOfWork(fiber: TFiber){
 }
 
 
-export default { unitOfWorkQueue, startNextUnitOfWork }
+export default { startNextUnitOfWork }
