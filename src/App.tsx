@@ -7,7 +7,7 @@ export default function App(){
   return (
     <div className="layout">
       <FunctionComponentA className='aaa'>
-        <strong>Hello world!</strong>
+        <strong>world!</strong>
       </FunctionComponentA>
       {
         false && <div>check boolean</div>
@@ -29,7 +29,7 @@ export default function App(){
       {
         Array(1000).fill(0).map(item => (
           <FunctionComponentA className='aaa'>
-            <strong>Hello world!</strong>
+            <strong>world!</strong>
           </FunctionComponentA>
         ))
       }
