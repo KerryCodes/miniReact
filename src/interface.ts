@@ -1,3 +1,6 @@
+import { Fiber } from "./fiber"
+
+
 export type TNode = Element | Text | DocumentFragment
 
 
@@ -30,28 +33,16 @@ export namespace TReact{
 }
 
 
-export interface TFiber{
-  type: TReactElement.Type,
-  props: TReactElement.Props,
-  dom: TNode,
-  parent: TFiber,
-  sibling?: TFiber,
-  child?: TFiber,
-  alternate: TFiber,
-  effectTag: 'UPDATE' | 'PLACEMENT' | 'DELETION',
-}
-
-
 export interface TRootFiberNode{
-  dom: Element,
-  current: TFiber,
-  workInProgress: TFiber,
+  rootNode: Element,
+  current: Fiber,
+  workInProgress: Fiber,
   firstEffect: TEffect,
   currentEffect: TEffect,
 }
 
 
 export interface TEffect{
-  fiber: TFiber,
+  fiber: Fiber,
   nextEffect: TEffect,
 }

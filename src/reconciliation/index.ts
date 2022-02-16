@@ -1,8 +1,8 @@
 import { deletions, Fiber, rootFiberNode } from "../fiber";
-import { TEffect, TFiber, TReactElement } from "../interface";
+import { TEffect, TReactElement } from "../interface";
 
 
-function diff(newFiber: TFiber) {
+function diff(newFiber: Fiber) {
   const oldFiber= newFiber.alternate
   if (!oldFiber) {
     newFiber.effectTag= "PLACEMENT"
@@ -34,7 +34,7 @@ function diff(newFiber: TFiber) {
 }
 
 
-function reconcileChildFibers(currentFiber: TFiber, newChildren: TReactElement.Jsx[], workInProgressFiber: TFiber) {
+function reconcileChildFibers(currentFiber: Fiber, newChildren: TReactElement.Jsx[], workInProgressFiber: Fiber) {
   let index = 0
   let fiber = currentFiber.child
   let wipFiber= null

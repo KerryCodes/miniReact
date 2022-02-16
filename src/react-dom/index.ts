@@ -1,18 +1,19 @@
 import { Fiber, rootFiberNode } from "../fiber";
-import { TFiber, TNode, TReactElement } from "../interface";
+import { TNode, TReactElement } from "../interface";
 import schedule from '../schedule';
 
 
-function render(reactElement: TReactElement.Jsx, rootNode: TNode){
+function render(reactElement: TReactElement.Jsx, rootNode: TNode){//需要加fiber
   const dom= createDom(reactElement)
   reactElement.props.children.map(item => render(item, dom))
   rootNode.appendChild(dom)
 }
 
 
-function createDom(fiber: TFiber | TReactElement.Jsx) {
-  const { type, props }= fiber
-  const { children, ...attributes }= props
+function createDom(fiber: Fiber | TReactElement.Jsx) {
+  //@ts-ignore
+  const { type, pendingProps, props }= fiber
+  const { children, ...attributes }= pendingProps || props
   let dom: TNode
 
   switch(type){
@@ -45,10 +46,9 @@ function createRoot(rootNode: Element){
 
 
 function concurrentRender(element: TReactElement.Jsx, rootNode: Element) {
-  //@ts-ignore
-  const rootFiber= new Fiber(element, rootFiberNode)
-  rootFiberNode.dom = rootNode
-  schedule.startNextUnitOfWork(rootFiber)
+  const rootFiber = new Fiber(element)
+  rootFiberNode.rootNode = rootNode
+  schedule.startWork(rootFiber)
 }
 
 

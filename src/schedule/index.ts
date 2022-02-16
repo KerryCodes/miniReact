@@ -1,66 +1,76 @@
 import commit from "../commit";
-import { performUnitOfWork, rootFiberNode } from "../fiber";
-import { TFiber } from "../interface";
+import { Fiber, rootFiberNode, updateFiber } from "../fiber";
 
 
-const yieldInterval= 5
+const YIELDINTERVAL= 5
 let startTime= 0
 const deadline= {
   get didTimeout(){
-    return this.getCurrentTime() - startTime >= yieldInterval
+    return this.getCurrentTime() - startTime >= YIELDINTERVAL
   },
   timeRemaining(){
-    return yieldInterval - (this.getCurrentTime() - startTime)
+    return YIELDINTERVAL - (this.getCurrentTime() - startTime)
   },
   getCurrentTime(){
     return performance.now()
   }
 }
-// const unitOfWorkQueue: TFiber[]= []
-let nextUnitOfWork: TFiber= null
-let hostCallback: (deadline: IdleDeadline) => boolean = null
-let isMessageLooping= false
+let workInProgress: Fiber = null
+let hostCallback: (deadline: IdleDeadline) => void
+let isMessageLooping = false
 
 const channel = new MessageChannel()
 const schedulePerformWorkUntilDeadline= () => channel.port2.postMessage(null)
 
 channel.port1.onmessage = e => {
   startTime= performance.now()
-  const hasMoreWork = hostCallback(deadline)
-  if (hasMoreWork) {
-    requestScheduleIdleCallback(workLoop)
+  hostCallback(deadline)
+  console.log('after schedulePerformWork, timeRemaining:', deadline.timeRemaining())
+  if (workInProgress) {
+    requestScheduleIdleCallback(workLoopConcurrent)
   } else {
     isMessageLooping = false
     commit.startCommitWork()
   }
-  console.log('new');
 }
 
 
-function requestScheduleIdleCallback(workLoop: (deadline: IdleDeadline) => boolean){
-  hostCallback= workLoop
+function requestScheduleIdleCallback(workLoopConcurrent: (deadline: IdleDeadline) => void){
+  hostCallback= workLoopConcurrent
   requestAnimationFrame(schedulePerformWorkUntilDeadline)
 }
 
 
-function workLoop(deadline: IdleDeadline): boolean{
+// performSyncWorkOnRoot会调用该方法
+// function workLoopSync() {
+//   while (workInProgress !== null) {
+//     performUnitOfWork(workInProgress);
+//   }
+// }
+
+// performConcurrentWorkOnRoot会调用该方法
+function workLoopConcurrent(deadline: IdleDeadline){
   let shouldYield = false
-  while(nextUnitOfWork && !shouldYield){
-    nextUnitOfWork= performUnitOfWork(nextUnitOfWork)
+  while (workInProgress !== null && !shouldYield) {
+    performUnitOfWork(workInProgress)
     shouldYield= deadline.timeRemaining() < 1
   }
-  return !!nextUnitOfWork
 }
 
 
-function startNextUnitOfWork(rootFiber: TFiber) {
+function performUnitOfWork(workInProgressFiber: Fiber) {
+  workInProgress= updateFiber(workInProgressFiber)
+}
+
+
+function startWork(rootFiber: Fiber) {
   if (!isMessageLooping) {
     rootFiberNode.workInProgress= rootFiber
-    nextUnitOfWork = rootFiber
+    workInProgress= rootFiber
     isMessageLooping = true
-    requestScheduleIdleCallback(workLoop)
+    requestScheduleIdleCallback(workLoopConcurrent)
   }
 }
 
 
-export default { startNextUnitOfWork }
+export default { startWork }

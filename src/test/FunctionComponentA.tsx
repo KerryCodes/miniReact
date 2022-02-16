@@ -2,8 +2,8 @@ import React from '../react'
 import { TReact } from '../interface'
 
 
-export function Aa(props: TReact.Props){
+export function FunctionComponentA(props: TReact.Props){
   const { children, ...rest } = props
 
-  return <span {...rest}>A{children}</span>
+  return <div {...rest}>children: {children}</div>
 }
