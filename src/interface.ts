@@ -33,13 +33,6 @@ export namespace TReact{
 }
 
 
-export interface TRootFiberNode{
-  current: Fiber,
-  firstEffect: TEffect,
-  currentEffect: TEffect,
-}
-
-
 export interface TEffect{
   fiber: Fiber,
   nextEffect: TEffect,

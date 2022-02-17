@@ -1,6 +1,6 @@
 import { Fiber, rootFiberNode } from "../fiber";
 import { TNode, TReactElement } from "../interface";
-import { startWorkConcurrent, startWorkSync } from "../reconciler";
+import { startWorkConcurrent, startWorkSync } from "../renderer";
 
 
 function createDom(fiber: Fiber | TReactElement.Jsx) {

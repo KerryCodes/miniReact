@@ -1,43 +1,4 @@
-import { commitRoot } from "../commit"
-import diff from "../diff"
-import { Fiber, rootFiberNode } from "../fiber"
-import { reconcileChildren } from "../reconciliation"
-import { isMessageLooping, requestScheduleIdleCallback } from "../schedule"
-
-
-let workInProgress: Fiber = null
-
-
-function startWorkSync(rootFiber: Fiber) {
-  workInProgress = rootFiber
-  workLoopSync()
-}
-
-
-function startWorkConcurrent(rootFiber: Fiber) {
-  if (!isMessageLooping) {
-    workInProgress= rootFiber
-    requestScheduleIdleCallback(workLoopConcurrent)
-  }
-}
-
-
-// performSyncWorkOnRoot会调用该方法
-function workLoopSync() {
-  while (workInProgress !== null) {
-    workInProgress= performUnitOfWork(workInProgress)
-  }
-  commitRoot(rootFiberNode.current)
-}
-
-
-// performConcurrentWorkOnRoot会调用该方法
-function workLoopConcurrent(deadline: IdleDeadline) {
-  const shouldYield= () => deadline.timeRemaining() < 1
-  while (workInProgress !== null && !shouldYield()) {
-    workInProgress= performUnitOfWork(workInProgress)
-  }
-}
+import { Fiber } from "../fiber"
 
 
 function performUnitOfWork(workInProgressFiber: Fiber) {
@@ -133,30 +94,43 @@ function bailoutOnAlreadyFinishedWork(current: Fiber | null, workInProgress: Fib
 }
 
 
-function updateFiber(fiber: Fiber): Fiber {
-  // TODO create new fibers
-  const { children } = fiber?.pendingProps || {}
+function reconcileChildren(current: Fiber | null, workInProgress: Fiber, nextChildren: any) {
+  if (current === null) {
+    // 对于mount的组件
+    workInProgress.child = mountChildFibers(workInProgress, null, nextChildren)
+  } else {
+    // 对于update的组件
+    // workInProgress.child = reconcileChildFibers(
+    //   workInProgress,
+    //   current.child,
+    //   nextChildren,
+    // )
+  }
+}
+
+function mountChildFibers(workInProgress: Fiber, currentChild: Fiber, nextChildren: any): Fiber {
+  const { children } = workInProgress?.pendingProps || {}
   let preFiber: Fiber
-  diff(fiber)
+  let workInProgressChild: Fiber = null
+  // diff(fiber)
   for (let i = 0; i < children?.length; i++){
     const newFiber = new Fiber('FunctionComponent', children[i])
-    newFiber.return= fiber
+    newFiber.return= workInProgress
     if (i === 0) {
-      fiber.child= newFiber
+      workInProgressChild= newFiber
     } else {
       preFiber.sibling= newFiber
     }
     preFiber= newFiber
   }
-  // TODO return next unit of work
-  if(fiber?.child){ return fiber.child }
-  let nexFiber= fiber
-  while(nexFiber){
-    if(nexFiber?.sibling){ return nexFiber.sibling }
-    nexFiber= nexFiber.return
-  }
-  return null
+
+  return workInProgressChild
 }
 
 
-export { workInProgress, startWorkSync, startWorkConcurrent, workLoopSync, workLoopConcurrent }
+function reconcileChildFibers() {
+  
+}
+
+
+export { performUnitOfWork }

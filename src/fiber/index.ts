@@ -1,12 +1,8 @@
-import diff from "../diff";
-import { TNode, TReactElement, TRootFiberNode } from "../interface";
-import { reconcileChildren } from "../reconciliation";
+import { TNode, TReactElement } from "../interface";
 
 
-const rootFiberNode: TRootFiberNode = {
+const rootFiberNode: {current: Fiber} = {
   current: null,
-  firstEffect: null,
-  currentEffect: null,
 }
 const deletions: Fiber[]= []
 

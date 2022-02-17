@@ -1,6 +1,6 @@
 import { commitRoot } from "../commit";
 import { rootFiberNode } from "../fiber";
-import { workInProgress, workLoopConcurrent } from "../reconciler";
+import { workInProgress, workLoopConcurrent } from "../renderer";
 
 
 const YIELDINTERVAL= 5
