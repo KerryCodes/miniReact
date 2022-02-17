@@ -3,12 +3,12 @@ import { TNode } from '../interface';
 import ReactDOM from '../react-dom';
 
 
-function startCommitWork() {
-  const domTree = commitWork(rootFiberNode.workInProgress)
-  rootFiberNode.rootNode.appendChild(domTree)//只有首次渲染需要
-  const { workInProgress } = rootFiberNode
-  rootFiberNode.current = workInProgress
-  rootFiberNode.current.alternate = workInProgress
+function commitRoot(rootFiber: Fiber) {
+  if (rootFiber.alternate === null) {
+    const domTree = commitWork(rootFiber.child)
+    rootFiber.stateNode.appendChild(domTree)//只有首次渲染需要
+    rootFiberNode.current.alternate = rootFiber
+  }
   console.log('rootFiberNode:', rootFiberNode)
 }
 
@@ -30,4 +30,4 @@ function commitWork(fiber: Fiber): TNode {
 }
 
 
-export default { startCommitWork }
+export { commitRoot }

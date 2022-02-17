@@ -2,60 +2,49 @@ import { deletions, Fiber, rootFiberNode } from "../fiber";
 import { TEffect, TReactElement } from "../interface";
 
 
-function diff(newFiber: Fiber) {
-  const oldFiber= newFiber.alternate
-  if (!oldFiber) {
-    newFiber.effectTag= "PLACEMENT"
+function reconcileChildren(current: Fiber | null, workInProgress: Fiber, nextChildren: any) {
+  if (current === null) {
+    // 对于mount的组件
+    workInProgress.child = mountChildFibers(workInProgress, null, nextChildren)
   } else {
-    if (newFiber.type !== oldFiber.type) {
-      newFiber.effectTag= "PLACEMENT"
-    }
-    if (newFiber.type === oldFiber.type && newFiber.props !== oldFiber.props) {
-      newFiber.effectTag= "UPDATE"
-    }
-    if (false) {
-      newFiber.effectTag= "DELETION"
-    }
-  }
-
-
-  const newEffect: TEffect= {
-    fiber: newFiber,
-    nextEffect: null,
-  }
-  if (!rootFiberNode.firstEffect) {
-    rootFiberNode.firstEffect = newEffect
-    rootFiberNode.currentEffect= newEffect
-  } else {
-    rootFiberNode.currentEffect.nextEffect = newEffect
-    rootFiberNode.currentEffect= newEffect
-  
+    // 对于update的组件
+    // workInProgress.child = reconcileChildFibers(
+    //   workInProgress,
+    //   current.child,
+    //   nextChildren,
+    // )
   }
 }
 
-
-function reconcileChildFibers(currentFiber: Fiber, newChildren: TReactElement.Jsx[], workInProgressFiber: Fiber) {
-  let index = 0
-  let fiber = currentFiber.child
-  let wipFiber= null
-  
-  while (fiber) {
-    const newChild = newChildren[index]
-    if (!newChild) {
-      deletions.push(fiber)
-    } else if (fiber.type === newChild.type) {
-      wipFiber = fiber.alternate
-      wipFiber.props.children= [newChild]
-      wipFiber.effectTag= "UPDATE"
+function mountChildFibers(workInProgress: Fiber, currentChild: Fiber, nextChildren: any): Fiber {
+  // TODO create new fibers
+  const { children } = workInProgress?.pendingProps || {}
+  let preFiber: Fiber
+  let workInProgressChild: Fiber
+  // diff(fiber)
+  for (let i = 0; i < children?.length; i++){
+    const newFiber = new Fiber('FunctionComponent', children[i])
+    newFiber.return= workInProgress
+    if (i === 0) {
+      workInProgressChild= newFiber
     } else {
-      wipFiber= new Fiber(newChild, workInProgressFiber, wipFiber)
-      wipFiber.effectTag = "PLACEMENT"
-      fiber.alternate= wipFiber
+      preFiber.sibling= newFiber
     }
-    index++
-    fiber= fiber.sibling
+    preFiber= newFiber
   }
+  return workInProgressChild
+  // TODO return next unit of work
+  // if(workInProgress?.child){ return workInProgress.child }
+  // let nexFiber= workInProgress
+  // while(nexFiber){
+  //   if(nexFiber?.sibling){ return nexFiber.sibling }
+  //   nexFiber= nexFiber.return
+  // }
+  // return null
 }
 
 
-export { reconcileChildFibers }
+function reconcileChildFibers(){}
+
+
+export { reconcileChildren }

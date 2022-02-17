@@ -1,12 +1,12 @@
 import { Fiber, rootFiberNode } from "../fiber";
 import { TNode, TReactElement } from "../interface";
-import schedule from '../schedule';
+import { startWorkConcurrent, startWorkSync } from "../reconciler";
 
 
 function createDom(fiber: Fiber | TReactElement.Jsx) {
   //@ts-ignore
   const { type, pendingProps, props }= fiber
-  const { children, ...attributes }= pendingProps || props
+  const { children, ...attributes }= pendingProps || props || {}
   let dom: TNode
 
   switch(type){
@@ -29,19 +29,22 @@ function createDom(fiber: Fiber | TReactElement.Jsx) {
 }
 
 
-function render(element: TReactElement.Jsx, rootNode: Element){
-  const rootFiber = new Fiber(element)
-  rootFiberNode.rootNode = rootNode
-  schedule.startWorkSync(rootFiber)
+function render(element: TReactElement.Jsx, rootNode: Element, concurrent?: boolean){
+  const rootFiber = new Fiber('HostComponent', element)
+  rootFiber.stateNode = rootNode
+  rootFiberNode.current= rootFiber
+  if (concurrent) {
+    startWorkConcurrent(rootFiber)
+  } else {
+    startWorkSync(rootFiber)
+  }
 }
 
 
 function createRoot(rootNode: Element){
   return {
     render(element: TReactElement.Jsx) {
-      const rootFiber = new Fiber(element)
-      rootFiberNode.rootNode = rootNode
-      schedule.startWorkConcurrent(rootFiber)
+      render(element, rootNode, true)
     }
   }
 }

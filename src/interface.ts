@@ -34,9 +34,7 @@ export namespace TReact{
 
 
 export interface TRootFiberNode{
-  rootNode: Element,
   current: Fiber,
-  workInProgress: Fiber,
   firstEffect: TEffect,
   currentEffect: TEffect,
 }
