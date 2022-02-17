@@ -41,12 +41,18 @@ function requestScheduleIdleCallback(workLoopConcurrent: (deadline: IdleDeadline
 }
 
 
+function performUnitOfWork(workInProgressFiber: Fiber) {
+  workInProgress= updateFiber(workInProgressFiber)
+}
+
+
 // performSyncWorkOnRoot会调用该方法
-// function workLoopSync() {
-//   while (workInProgress !== null) {
-//     performUnitOfWork(workInProgress);
-//   }
-// }
+function workLoopSync() {
+  while (workInProgress !== null) {
+    performUnitOfWork(workInProgress)
+  }
+  commit.startCommitWork()
+}
 
 // performConcurrentWorkOnRoot会调用该方法
 function workLoopConcurrent(deadline: IdleDeadline){
@@ -58,12 +64,14 @@ function workLoopConcurrent(deadline: IdleDeadline){
 }
 
 
-function performUnitOfWork(workInProgressFiber: Fiber) {
-  workInProgress= updateFiber(workInProgressFiber)
+function startWorkSync(rootFiber: Fiber) {
+  rootFiberNode.workInProgress= rootFiber
+  workInProgress = rootFiber
+  workLoopSync()
 }
 
 
-function startWork(rootFiber: Fiber) {
+function startWorkConcurrent(rootFiber: Fiber) {
   if (!isMessageLooping) {
     rootFiberNode.workInProgress= rootFiber
     workInProgress= rootFiber
@@ -73,4 +81,4 @@ function startWork(rootFiber: Fiber) {
 }
 
 
-export default { startWork }
+export default { startWorkSync, startWorkConcurrent }

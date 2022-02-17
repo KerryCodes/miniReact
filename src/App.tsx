@@ -19,7 +19,7 @@ export default function App(){
         <span>check div</span>
       </div>
       <input />
-      <a href="https://www.baidu.com" target='_blank'>百度</a>
+      <a href="https://kerrycodes.github.io" target='_blank'>leggo</a>
       <br />
       <strong>check br</strong>
       <br />

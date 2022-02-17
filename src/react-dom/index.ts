@@ -3,13 +3,6 @@ import { TNode, TReactElement } from "../interface";
 import schedule from '../schedule';
 
 
-function render(reactElement: TReactElement.Jsx, rootNode: TNode){//需要加fiber
-  const dom= createDom(reactElement)
-  reactElement.props.children.map(item => render(item, dom))
-  rootNode.appendChild(dom)
-}
-
-
 function createDom(fiber: Fiber | TReactElement.Jsx) {
   //@ts-ignore
   const { type, pendingProps, props }= fiber
@@ -36,20 +29,22 @@ function createDom(fiber: Fiber | TReactElement.Jsx) {
 }
 
 
+function render(element: TReactElement.Jsx, rootNode: Element){
+  const rootFiber = new Fiber(element)
+  rootFiberNode.rootNode = rootNode
+  schedule.startWorkSync(rootFiber)
+}
+
+
 function createRoot(rootNode: Element){
   return {
-    render(element: TReactElement.Jsx){
-      concurrentRender(element, rootNode)
+    render(element: TReactElement.Jsx) {
+      const rootFiber = new Fiber(element)
+      rootFiberNode.rootNode = rootNode
+      schedule.startWorkConcurrent(rootFiber)
     }
   }
 }
 
 
-function concurrentRender(element: TReactElement.Jsx, rootNode: Element) {
-  const rootFiber = new Fiber(element)
-  rootFiberNode.rootNode = rootNode
-  schedule.startWork(rootFiber)
-}
-
-
-export default { render, createDom, createRoot }
+export default { createDom, render, createRoot }
