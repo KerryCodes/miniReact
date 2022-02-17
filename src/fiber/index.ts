@@ -12,6 +12,8 @@ const deletions: Fiber[]= []
 
 
 class Fiber{
+  // 指向该fiber在另一次更新时对应的fiber
+  alternate: Fiber = null
   // 作为静态数据结构的属性
   tag: 'FunctionComponent' | 'ClassComponent' | 'HostComponent' // Fiber对应组件的类型 Function/Class/Host...
   key: string | number // key属性
@@ -39,25 +41,19 @@ class Fiber{
   // 调度优先级相关
   lanes: any
   childLanes: any
-  // 指向该fiber在另一次更新时对应的fiber
-  alternate: Fiber = null
+
   constructor(
     tag: 'FunctionComponent' | 'ClassComponent' | 'HostComponent',
     element: TReactElement.Jsx,
     mode?: any
   ) {
-    if (tag === 'HostComponent') {
-      this.tag = tag
-      this.child = new Fiber('FunctionComponent', element)
-    } else {
-      const { type, props } = element
-      const { key, ...pendingProps } = props
-      this.type= type
-      this.key = key
-      this.pendingProps = pendingProps
-      this.tag = tag
-      this.mode= mode
-    }
+    const { type, props } = element
+    const { key, ...pendingProps } = props
+    this.type= type
+    this.key = key
+    this.pendingProps = pendingProps
+    this.tag = tag
+    this.mode= mode
   }
 }
 

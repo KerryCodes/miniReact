@@ -30,7 +30,10 @@ function createDom(fiber: Fiber | TReactElement.Jsx) {
 
 
 function render(element: TReactElement.Jsx, rootNode: Element, concurrent?: boolean){
-  const rootFiber = new Fiber('HostComponent', element)
+  const rootFiber = new Fiber('HostComponent', {
+    type: 'div',
+    props: { children: [element] }
+  })
   rootFiber.stateNode = rootNode
   rootFiberNode.current= rootFiber
   if (concurrent) {

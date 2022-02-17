@@ -20,7 +20,7 @@ function mountChildFibers(workInProgress: Fiber, currentChild: Fiber, nextChildr
   // TODO create new fibers
   const { children } = workInProgress?.pendingProps || {}
   let preFiber: Fiber
-  let workInProgressChild: Fiber
+  let workInProgressChild: Fiber = null
   // diff(fiber)
   for (let i = 0; i < children?.length; i++){
     const newFiber = new Fiber('FunctionComponent', children[i])

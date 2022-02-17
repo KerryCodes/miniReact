@@ -1,6 +1,7 @@
 import { commitRoot } from "../commit"
 import diff from "../diff"
 import { Fiber, rootFiberNode } from "../fiber"
+import { reconcileChildren } from "../reconciliation"
 import { isMessageLooping, requestScheduleIdleCallback } from "../schedule"
 
 
@@ -77,10 +78,18 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
   // mount时：根据tag不同，创建不同的子Fiber节点
   switch (workInProgress.tag) {
     case 'HostComponent':
+      const rootFiber = new Fiber('FunctionComponent', workInProgress.pendingProps.children[0])
+      rootFiber.return= workInProgress
+      workInProgress.child = rootFiber
       return workInProgress.child
     case 'FunctionComponent':
-      // reconcileChildren(current, workInProgress, null)
-      return updateFiber(workInProgress)
+      reconcileChildren(current, workInProgress, null)
+      if (workInProgress.child === null) {
+        return completeWork(workInProgress.alternate, workInProgress)
+      } else {
+        return workInProgress.child
+      }
+      // return updateFiber(workInProgress)
     case 'ClassComponent':
       return;
   }
@@ -88,9 +97,7 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
 
 
 function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
-  const newProps = workInProgress.pendingProps;
-
-  // mount时：根据tag不同，创建不同的子Fiber节点
+  // const newProps = workInProgress.pendingProps;
   switch (workInProgress.tag) {
     case 'HostComponent':
       popHostContext(workInProgress);
@@ -106,10 +113,10 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
       }
       return null
     case 'FunctionComponent':
-      if (current.sibling) {
-        beginWork(current.sibling, current.sibling.alternate)
+      if (workInProgress.sibling) {
+        return workInProgress.sibling
       } else {
-        completeWork(current.return, current.return.alternate)
+        return completeWork(workInProgress.return.alternate, workInProgress.return)
       }
     case 'ClassComponent':
       return;
