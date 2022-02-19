@@ -7,7 +7,7 @@ function performUnitOfWork(workInProgress: Fiber) {
 
 
 function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
-  let didReceiveUpdate
+  let didReceiveUpdate= true
   // update时：如果current存在可能存在优化路径，可以复用current（即上一次更新的Fiber节点）
   if (current !== null) {
     const oldProps = current.memoizedProps;
@@ -74,7 +74,8 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
       if (workInProgress.sibling) {
         return workInProgress.sibling
       } else {
-        return completeWork(workInProgress.return.alternate, workInProgress.return)
+        const parent= workInProgress.return
+        return completeWork(parent.alternate, parent)
       }
     case 'ClassComponent':
       return;
@@ -91,25 +92,30 @@ function bailoutOnAlreadyFinishedWork(current: Fiber | null, workInProgress: Fib
 }
 
 
-function reconcileChildren(current: Fiber | null, workInProgress: Fiber, nextChildren: any) {
+function reconcileChildren(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  nextChildren: any
+) {
   if (current === null) {
     // 对于mount的组件
     workInProgress.child = mountChildFibers(workInProgress, null, nextChildren)
   } else {
     // 对于update的组件
-    // workInProgress.child = reconcileChildFibers(
-    //   workInProgress,
-    //   current.child,
-    //   nextChildren,
-    // )
+    workInProgress.child = reconcileChildFibers(workInProgress, current.child, nextChildren)
   }
 }
 
-function mountChildFibers(workInProgress: Fiber, currentChild: Fiber, nextChildren: any): Fiber {
+
+function mountChildFibers(
+  workInProgress: Fiber,
+  currentFirstChild: Fiber,
+  nextChildren: any
+): Fiber | null {
   const { children } = workInProgress.pendingProps
   let preFiber: Fiber
   let workInProgressChild: Fiber = null
-  // diff(fiber)
+
   for (let i = 0; i < children?.length; i++){
     const newFiber = new Fiber('FunctionComponent', children[i])
     newFiber.return= workInProgress
@@ -125,7 +131,11 @@ function mountChildFibers(workInProgress: Fiber, currentChild: Fiber, nextChildr
 }
 
 
-function reconcileChildFibers() {
+function reconcileChildFibers(
+  workInProgress: Fiber,
+  currentFirstChild: Fiber | null,
+  nextChildren: any
+): Fiber | null {
   
 }
 

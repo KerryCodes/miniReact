@@ -1,6 +1,6 @@
 import { Fiber, rootFiberNode } from "../fiber";
 import { TNode, TReactElement } from "../interface";
-import { startWorkConcurrent, startWorkSync } from "../renderer";
+import { performConcurrentWorkOnRoot, performSyncWorkOnRoot } from "../renderer";
 
 
 function createDom(fiber: Fiber | TReactElement.Jsx) {
@@ -40,9 +40,9 @@ function render(element: TReactElement.Jsx, rootNode: Element, concurrent?: bool
     alternate: rootFiber,
   }
   if (concurrent) {
-    startWorkConcurrent(rootFiber)
+    performConcurrentWorkOnRoot(rootFiber)
   } else {
-    startWorkSync(rootFiber)
+    performSyncWorkOnRoot(rootFiber)
   }
 }
 

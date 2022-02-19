@@ -3,11 +3,11 @@ import { TNode } from '../interface';
 import ReactDOM from '../react-dom';
 
 
-function commitRoot(rootFiber: Fiber) {
-  if (rootFiber.alternate === null) {
-    const domTree = commitWork(rootFiber.child)
-    rootFiber.stateNode.appendChild(domTree)//只有首次渲染需要
-    rootFiberNode.current= rootFiber
+function commitRoot(rootFiberWorkInProgress: Fiber) {
+  if (rootFiberWorkInProgress.alternate === null) {
+    const domTree = commitWork(rootFiberWorkInProgress.child)
+    rootFiberWorkInProgress.stateNode.appendChild(domTree)//只有首次渲染需要
+    rootFiberNode.current= rootFiberWorkInProgress
   }
   console.log('rootFiberNode:', rootFiberNode)
 }
@@ -17,14 +17,13 @@ function commitWork(fiber: Fiber | null): TNode | null {
   if (fiber === null) {
     return null
   }
-  fiber.stateNode = ReactDOM.createDom(fiber)
-  // switch (fiber.effectTag) {
-  //   case 'PLACEMENT':
-  //     fiber.stateNode = ReactDOM.createDom(fiber)
-  //     break;
-  //   case "UPDATE":
-  //     break;
-  // }
+  switch (fiber.effectTag) {
+    case 'PLACEMENT':
+      fiber.stateNode = ReactDOM.createDom(fiber)
+      break;
+    case "UPDATE":
+      break;
+  }
   fiber.return.stateNode.appendChild(fiber.stateNode)
   commitWork(fiber.child)
   commitWork(fiber.sibling)

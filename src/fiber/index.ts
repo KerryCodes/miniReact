@@ -12,7 +12,7 @@ class Fiber{
   alternate: Fiber = null
   // 作为静态数据结构的属性
   tag: 'FunctionComponent' | 'ClassComponent' | 'HostComponent' // Fiber对应组件的类型 Function/Class/Host...
-  key: string | number // key属性
+  key: string | number = null // key属性
   elementType: TReactElement.Type // 大部分情况同type，某些情况不同，比如FunctionComponent使用React.memo包裹
   type: TReactElement.Type // 对于 FunctionComponent，指函数本身，对于ClassCompoent，指class，对于HostComponent，指DOM节点tagName
   stateNode: TNode // Fiber对应的真实DOM节点
@@ -21,7 +21,7 @@ class Fiber{
   child: Fiber = null
   sibling: Fiber = null
   index: number
-  ref: any
+  ref: any = null
   // 作为动态的工作单元的属性, 保存本次更新造成的状态改变相关信息
   pendingProps: any
   memoizedProps: any
@@ -30,7 +30,7 @@ class Fiber{
   dependencies: any
   mode: any
   // 保存本次更新会造成的DOM操作
-  effectTag: 'UPDATE' | 'PLACEMENT' | 'DELETION'
+  effectTag: 'UPDATE' | 'PLACEMENT' | 'DELETION' = 'PLACEMENT'
   nextEffect: any
   firstEffect: any
   lastEffect: any

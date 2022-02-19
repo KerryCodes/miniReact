@@ -7,13 +7,13 @@ import { isMessageLooping, requestScheduleIdleCallback } from "../schedule"
 let workInProgress: Fiber = null
 
 
-function startWorkSync(rootFiberWorkInProgress: Fiber) {
+function performSyncWorkOnRoot(rootFiberWorkInProgress: Fiber) {
   workInProgress = rootFiberWorkInProgress
   workLoopSync()
 }
 
 
-function startWorkConcurrent(rootFiberWorkInProgress: Fiber) {
+function performConcurrentWorkOnRoot(rootFiberWorkInProgress: Fiber) {
   if (!isMessageLooping) {
     workInProgress= rootFiberWorkInProgress
     requestScheduleIdleCallback(workLoopConcurrent)
@@ -39,4 +39,4 @@ function workLoopConcurrent(deadline: IdleDeadline) {
 }
 
 
-export { workInProgress, startWorkSync, startWorkConcurrent, workLoopSync, workLoopConcurrent }
+export { workInProgress, performSyncWorkOnRoot, performConcurrentWorkOnRoot, workLoopSync, workLoopConcurrent }
