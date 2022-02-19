@@ -35,7 +35,10 @@ function render(element: TReactElement.Jsx, rootNode: Element, concurrent?: bool
     props: { children: [element] }
   })
   rootFiber.stateNode = rootNode
-  rootFiberNode.current= rootFiber
+  //@ts-ignore
+  rootFiberNode.current = {
+    alternate: rootFiber,
+  }
   if (concurrent) {
     startWorkConcurrent(rootFiber)
   } else {

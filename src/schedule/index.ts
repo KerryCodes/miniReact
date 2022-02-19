@@ -30,7 +30,7 @@ channel.port1.onmessage = e => {
     requestScheduleIdleCallback(workLoopConcurrent)
   } else {
     isMessageLooping = false
-    commitRoot(rootFiberNode.current)
+    commitRoot(rootFiberNode.current.alternate)
   }
 }
 

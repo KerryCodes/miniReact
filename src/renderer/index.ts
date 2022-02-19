@@ -7,15 +7,15 @@ import { isMessageLooping, requestScheduleIdleCallback } from "../schedule"
 let workInProgress: Fiber = null
 
 
-function startWorkSync(rootFiber: Fiber) {
-  workInProgress = rootFiber
+function startWorkSync(rootFiberWorkInProgress: Fiber) {
+  workInProgress = rootFiberWorkInProgress
   workLoopSync()
 }
 
 
-function startWorkConcurrent(rootFiber: Fiber) {
+function startWorkConcurrent(rootFiberWorkInProgress: Fiber) {
   if (!isMessageLooping) {
-    workInProgress= rootFiber
+    workInProgress= rootFiberWorkInProgress
     requestScheduleIdleCallback(workLoopConcurrent)
   }
 }
@@ -26,7 +26,7 @@ function workLoopSync() {
   while (workInProgress !== null) {
     workInProgress= performUnitOfWork(workInProgress)
   }
-  commitRoot(rootFiberNode.current)
+  commitRoot(rootFiberNode.current.alternate)
 }
 
 

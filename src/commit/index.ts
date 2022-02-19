@@ -7,14 +7,16 @@ function commitRoot(rootFiber: Fiber) {
   if (rootFiber.alternate === null) {
     const domTree = commitWork(rootFiber.child)
     rootFiber.stateNode.appendChild(domTree)//只有首次渲染需要
-    rootFiberNode.current.alternate = rootFiber
+    rootFiberNode.current= rootFiber
   }
   console.log('rootFiberNode:', rootFiberNode)
 }
 
 
-function commitWork(fiber: Fiber): TNode {
-  if (!fiber) { return }
+function commitWork(fiber: Fiber | null): TNode | null {
+  if (fiber === null) {
+    return null
+  }
   fiber.stateNode = ReactDOM.createDom(fiber)
   // switch (fiber.effectTag) {
   //   case 'PLACEMENT':
@@ -23,7 +25,7 @@ function commitWork(fiber: Fiber): TNode {
   //   case "UPDATE":
   //     break;
   // }
-  fiber.return?.stateNode.appendChild(fiber.stateNode)
+  fiber.return.stateNode.appendChild(fiber.stateNode)
   commitWork(fiber.child)
   commitWork(fiber.sibling)
   return fiber.stateNode

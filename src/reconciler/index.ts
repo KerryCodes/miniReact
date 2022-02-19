@@ -1,8 +1,8 @@
 import { Fiber } from "../fiber"
 
 
-function performUnitOfWork(workInProgressFiber: Fiber) {
-   return beginWork(workInProgressFiber.alternate, workInProgressFiber)
+function performUnitOfWork(workInProgress: Fiber) {
+   return beginWork(workInProgress.alternate, workInProgress)
 }
 
 
@@ -33,25 +33,23 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
     //   didReceiveUpdate = false;
     // }
   } else {
-    didReceiveUpdate = false;
+    didReceiveUpdate = false
   }
 
   // mount时：根据tag不同，创建不同的子Fiber节点
   switch (workInProgress.tag) {
     case 'HostComponent':
-      const rootFiber = new Fiber('FunctionComponent', workInProgress.pendingProps.children[0])
-      rootFiber.return= workInProgress
-      workInProgress.child = rootFiber
+      reconcileChildren(current, workInProgress, null)
       return workInProgress.child
     case 'FunctionComponent':
       reconcileChildren(current, workInProgress, null)
       if (workInProgress.child === null) {
-        return completeWork(workInProgress.alternate, workInProgress)
+        return completeWork(current, workInProgress)
       } else {
         return workInProgress.child
       }
-      // return updateFiber(workInProgress)
     case 'ClassComponent':
+      //略
       return;
   }
 }
@@ -64,7 +62,6 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
       popHostContext(workInProgress);
       const rootContainerInstance = getRootHostContainer()
       const type = workInProgress.type
-    
       if (current !== null && workInProgress.stateNode != null) {
         // update的情况
         // ...省略
@@ -109,7 +106,7 @@ function reconcileChildren(current: Fiber | null, workInProgress: Fiber, nextChi
 }
 
 function mountChildFibers(workInProgress: Fiber, currentChild: Fiber, nextChildren: any): Fiber {
-  const { children } = workInProgress?.pendingProps || {}
+  const { children } = workInProgress.pendingProps
   let preFiber: Fiber
   let workInProgressChild: Fiber = null
   // diff(fiber)
