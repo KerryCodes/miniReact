@@ -30,9 +30,9 @@ function createDom(fiber: Fiber | TReactElement.Jsx) {
 
 
 function render(element: TReactElement.Jsx, rootNode: Element, concurrent?: boolean){
-  const rootFiber = new Fiber('HostComponent', {
+  const rootFiber = new Fiber('HostRoot', {
     type: 'div',
-    props: { children: [element] }
+    props: { children: [element] },
   })
   rootFiber.stateNode = rootNode
   //@ts-ignore

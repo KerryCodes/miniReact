@@ -1,4 +1,5 @@
 import { Fiber } from "../fiber"
+import { TReactElement } from "../interface";
 
 
 function performUnitOfWork(workInProgress: Fiber) {
@@ -35,22 +36,29 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
   } else {
     didReceiveUpdate = false
   }
-
-  // mount时：根据tag不同，创建不同的子Fiber节点
+  
+  let nextChildren= workInProgress.pendingProps.children
+  // 根据tag不同，创建不同的子Fiber节点
   switch (workInProgress.tag) {
+    case 'HostRoot':
     case 'HostComponent':
-      reconcileChildren(current, workInProgress, null)
-      return workInProgress.child
+      reconcileChildren(current, workInProgress, nextChildren)
+      break;
     case 'FunctionComponent':
-      reconcileChildren(current, workInProgress, null)
-      if (workInProgress.child === null) {
-        return completeWork(current, workInProgress)
-      } else {
-        return workInProgress.child
-      }
+      //@ts-ignore
+      nextChildren = [workInProgress.type(workInProgress.pendingProps)]
+      reconcileChildren(current, workInProgress, nextChildren)
+      break;
     case 'ClassComponent':
       //略
-      return;
+      break;
+    default:
+      reconcileChildren(current, workInProgress, nextChildren)
+  }
+  if (workInProgress.child === null) {
+    return completeWork(current, workInProgress)
+  } else {
+    return workInProgress.child
   }
 }
 
@@ -58,6 +66,8 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
 function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
   // const newProps = workInProgress.pendingProps;
   switch (workInProgress.tag) {
+    case 'HostRoot':
+      return null
     case 'HostComponent':
       popHostContext(workInProgress);
       const rootContainerInstance = getRootHostContainer()
@@ -69,16 +79,18 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
         // mount的情况
         // ...省略
       }
-      return null
     case 'FunctionComponent':
-      if (workInProgress.sibling) {
-        return workInProgress.sibling
-      } else {
-        const parent= workInProgress.return
-        return completeWork(parent.alternate, parent)
-      }
+      break;
     case 'ClassComponent':
-      return;
+      break;
+    default:
+      break;
+  }
+  if (workInProgress.sibling) {
+    return workInProgress.sibling
+  } else {
+    const parent= workInProgress.return
+    return completeWork(parent.alternate, parent)
   }
 }
 
@@ -95,7 +107,7 @@ function bailoutOnAlreadyFinishedWork(current: Fiber | null, workInProgress: Fib
 function reconcileChildren(
   current: Fiber | null,
   workInProgress: Fiber,
-  nextChildren: any
+  nextChildren: TReactElement.Jsx[],
 ) {
   if (current === null) {
     // 对于mount的组件
@@ -109,22 +121,25 @@ function reconcileChildren(
 
 function mountChildFibers(
   workInProgress: Fiber,
-  currentFirstChild: Fiber,
-  nextChildren: any
+  currentFirstChild: null,
+  nextChildren: TReactElement.Jsx[],
 ): Fiber | null {
-  const { children } = workInProgress.pendingProps
   let preFiber: Fiber
   let workInProgressChild: Fiber = null
 
-  for (let i = 0; i < children?.length; i++){
-    const newFiber = new Fiber('FunctionComponent', children[i])
+  for (let i = 0; i < nextChildren?.length; i++){
+    const tag= nextChildren[i].type instanceof Function ? 'FunctionComponent' : 'HostComponent'
+    const newFiber = new Fiber(tag, nextChildren[i])
+    if (tag !== 'FunctionComponent') {
+      newFiber.effectTag= 'PLACEMENT'
+    }
     newFiber.return= workInProgress
     if (i === 0) {
       workInProgressChild= newFiber
     } else {
       preFiber.sibling= newFiber
     }
-    preFiber= newFiber
+    preFiber = newFiber
   }
 
   return workInProgressChild
@@ -136,7 +151,7 @@ function reconcileChildFibers(
   currentFirstChild: Fiber | null,
   nextChildren: any
 ): Fiber | null {
-  
+  return null
 }
 
 

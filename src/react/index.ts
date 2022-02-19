@@ -6,17 +6,12 @@ function createElement(
   props: TReactElement.Props, 
   ...children: TReactElement.Jsx[]
 ): TReactElement.Jsx{
-  if (typeof type === 'function') {
-    const FunctionComponent= type
-    return FunctionComponent({ ...props, children })
-  } else {
-    return {
-      type,
-      props: {
-        ...props,
-        children: children.flat().map(item => typeof item === "object" ? item : createTextElement(item)),
-      },
-    }
+  return {
+    type,
+    props: {
+      ...props,
+      children: children.flat().map(item => typeof item === "object" ? item : createTextElement(item)),
+    },
   }
 }
 

@@ -1,5 +1,5 @@
 import { Fiber, rootFiberNode } from "../fiber"
-import { startWorkSync, startWorkConcurrent } from "../renderer"
+import { performSyncWorkOnRoot, performConcurrentWorkOnRoot } from "../renderer"
 
 
 function useState() {
@@ -7,8 +7,8 @@ function useState() {
   const rootFiber = {...current}
   //@ts-ignore
   rootFiberNode.current.alternate= rootFiber
-  startWorkConcurrent(rootFiber)
-  // startWorkSync(rootFiber)
+  performConcurrentWorkOnRoot(rootFiber)
+  // performSyncWorkOnRoot(rootFiber)
 }
 
 

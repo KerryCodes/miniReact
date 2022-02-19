@@ -5,8 +5,7 @@ import ReactDOM from '../react-dom';
 
 function commitRoot(rootFiberWorkInProgress: Fiber) {
   if (rootFiberWorkInProgress.alternate === null) {
-    const domTree = commitWork(rootFiberWorkInProgress.child)
-    rootFiberWorkInProgress.stateNode.appendChild(domTree)//只有首次渲染需要
+    commitWork(rootFiberWorkInProgress.child)
     rootFiberNode.current= rootFiberWorkInProgress
   }
   console.log('rootFiberNode:', rootFiberNode)
@@ -19,12 +18,19 @@ function commitWork(fiber: Fiber | null): TNode | null {
   }
   switch (fiber.effectTag) {
     case 'PLACEMENT':
+      let parentFiber= fiber.return
       fiber.stateNode = ReactDOM.createDom(fiber)
+      if (fiber.stateNode) {
+        while (!parentFiber.stateNode) {
+          parentFiber= parentFiber.return
+        }
+        parentFiber.stateNode.appendChild(fiber.stateNode)
+      }
       break;
     case "UPDATE":
       break;
   }
-  fiber.return.stateNode.appendChild(fiber.stateNode)
+  fiber.effectTag= null
   commitWork(fiber.child)
   commitWork(fiber.sibling)
   return fiber.stateNode
