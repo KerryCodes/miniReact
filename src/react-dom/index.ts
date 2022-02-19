@@ -22,6 +22,11 @@ function createDom(fiber: Fiber | TReactElement.Jsx) {
 
   Reflect.ownKeys(attributes).forEach(key => {
     //@ts-ignore
+    if (key.startsWith('on')) {
+      //@ts-ignore
+      dom.addEventListener(key.toLowerCase().substring(2), attributes[key])
+    }
+    //@ts-ignore
     dom[key]= attributes[key]
   })
 

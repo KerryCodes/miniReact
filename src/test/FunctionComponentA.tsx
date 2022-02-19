@@ -5,5 +5,9 @@ import { TReact } from '../interface'
 export function FunctionComponentA(props: TReact.Props){
   const { children, ...rest } = props
 
-  return <div {...rest}>Hello {children}</div>
+  const onClick = (e: Event) => {
+    console.log('click:', e);
+  }
+
+  return <div {...rest} onClick={onClick}>Hello {children}</div>
 }

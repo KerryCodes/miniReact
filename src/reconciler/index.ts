@@ -38,7 +38,7 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
   }
   
   let nextChildren= workInProgress.pendingProps.children
-  // 根据tag不同，创建不同的子Fiber节点
+  // monet: 根据tag不同，创建不同的子Fiber节点
   switch (workInProgress.tag) {
     case 'HostRoot':
     case 'HostComponent':
@@ -111,7 +111,7 @@ function reconcileChildren(
 ) {
   if (current === null) {
     // 对于mount的组件
-    workInProgress.child = mountChildFibers(workInProgress, null, nextChildren)
+    workInProgress.child = mountChildFibers(workInProgress, nextChildren)
   } else {
     // 对于update的组件
     workInProgress.child = reconcileChildFibers(workInProgress, current.child, nextChildren)
@@ -121,15 +121,15 @@ function reconcileChildren(
 
 function mountChildFibers(
   workInProgress: Fiber,
-  currentFirstChild: null,
   nextChildren: TReactElement.Jsx[],
 ): Fiber | null {
   let preFiber: Fiber
   let workInProgressChild: Fiber = null
 
   for (let i = 0; i < nextChildren?.length; i++){
-    const tag= nextChildren[i].type instanceof Function ? 'FunctionComponent' : 'HostComponent'
-    const newFiber = new Fiber(tag, nextChildren[i])
+    const element= nextChildren[i]
+    const tag= element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
+    const newFiber = new Fiber(tag, element)
     if (tag !== 'FunctionComponent') {
       newFiber.effectTag= 'PLACEMENT'
     }
