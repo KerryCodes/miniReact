@@ -6,7 +6,7 @@ export function FunctionComponentA(props: TReact.Props){
   const { children, ...rest } = props
 
   const onClick = (e: Event) => {
-    console.log('click:', e);
+    console.log('click:', e)
   }
 
   return <div {...rest} onClick={onClick}>Hello {children}</div>

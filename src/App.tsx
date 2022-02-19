@@ -1,14 +1,16 @@
 import './index.less'
 import React from './react'
 import { FunctionComponentA } from './test/FunctionComponentA'
+import { TestHookCom } from './test/TestHookCom'
 
 
 export default function App(){
   return (
     <div className="layout">
-      <FunctionComponentA className='aaa'>
+      {/* <FunctionComponentA className='aaa'>
         <strong>world!</strong>
-      </FunctionComponentA>
+      </FunctionComponentA> */}
+      <TestHookCom />
       {
         false && <div>check boolean</div>
       }
@@ -27,11 +29,11 @@ export default function App(){
       <br />
       <div>1000 FunctionComponentA:</div>
       {
-        Array(1000).fill(0).map(item => (
-          <FunctionComponentA className='aaa'>
-            <strong>world!</strong>
-          </FunctionComponentA>
-        ))
+        // Array(1000).fill(0).map(item => (
+        //   <FunctionComponentA className='aaa'>
+        //     <strong>world!</strong>
+        //   </FunctionComponentA>
+        // ))
       }
     </div>
   )

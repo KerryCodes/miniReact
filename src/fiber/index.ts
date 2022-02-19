@@ -1,8 +1,9 @@
 import { TNode, TReactElement } from "../interface";
 
 
-const rootFiberNode: {current: Fiber} = {
+const rootFiberNode: any = {
   current: null,
+  rootFiberWorkInProgress: null,
 }
 const deletions: Fiber[]= []
 
@@ -26,9 +27,11 @@ class Fiber{
   pendingProps: any
   memoizedProps: any
   updateQueue: any
-  memoizedState: any
-  dependencies: any
+  memoizedState: any[] = []
+  dependencies: any[][] = []
   mode: any
+  // hooks
+  hooks: ('useState' | 'useMemo' | 'useEffect')[] = []
   // 保存本次更新会造成的DOM操作
   effectTag: 'PLACEMENT' | 'UPDATE' | 'DELETION' = null
   nextEffect: any
@@ -49,7 +52,7 @@ class Fiber{
     this.key = key
     this.pendingProps = pendingProps
     this.tag = tag
-    this.mode= mode
+    this.mode = mode
   }
 }
 

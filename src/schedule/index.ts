@@ -1,5 +1,4 @@
 import { commitRoot } from "../commit";
-import { rootFiberNode } from "../fiber";
 import { workInProgress, workLoopConcurrent } from "../renderer";
 
 
@@ -30,7 +29,7 @@ channel.port1.onmessage = e => {
     requestScheduleIdleCallback(workLoopConcurrent)
   } else {
     isMessageLooping = false
-    commitRoot(rootFiberNode.current.alternate)
+    commitRoot()
   }
 }
 

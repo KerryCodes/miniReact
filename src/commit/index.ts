@@ -3,11 +3,10 @@ import { TNode } from '../interface';
 import ReactDOM from '../react-dom';
 
 
-function commitRoot(rootFiberWorkInProgress: Fiber) {
-  if (rootFiberWorkInProgress.alternate === null) {
-    commitWork(rootFiberWorkInProgress.child)
-    rootFiberNode.current= rootFiberWorkInProgress
-  }
+function commitRoot() {
+  commitWork(rootFiberNode.rootFiberWorkInProgress.child)
+  rootFiberNode.current = rootFiberNode.rootFiberWorkInProgress
+  rootFiberNode.rootFiberWorkInProgress= null
   console.log('rootFiberNode:', rootFiberNode)
 }
 

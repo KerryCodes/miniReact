@@ -1,5 +1,9 @@
-import { Fiber } from "../fiber"
+import { Fiber, rootFiberNode } from "../fiber"
+import { recoverIndex } from "../hooks";
 import { TReactElement } from "../interface";
+
+
+let currentComponent: Fiber
 
 
 function performUnitOfWork(workInProgress: Fiber) {
@@ -45,9 +49,11 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
       reconcileChildren(current, workInProgress, nextChildren)
       break;
     case 'FunctionComponent':
+      currentComponent= workInProgress
       //@ts-ignore
       nextChildren = [workInProgress.type(workInProgress.pendingProps)]
       reconcileChildren(current, workInProgress, nextChildren)
+      recoverIndex()
       break;
     case 'ClassComponent':
       //略
@@ -114,7 +120,7 @@ function reconcileChildren(
     workInProgress.child = mountChildFibers(workInProgress, nextChildren)
   } else {
     // 对于update的组件
-    workInProgress.child = reconcileChildFibers(workInProgress, current.child, nextChildren)
+    workInProgress.child = reconcileChildFibers(workInProgress, current?.child, nextChildren)
   }
 }
 
@@ -151,8 +157,8 @@ function reconcileChildFibers(
   currentFirstChild: Fiber | null,
   nextChildren: any
 ): Fiber | null {
-  return null
+  return workInProgress.child
 }
 
 
-export { performUnitOfWork }
+export { performUnitOfWork, currentComponent }
