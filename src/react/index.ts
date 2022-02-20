@@ -1,11 +1,7 @@
 import { TReactElement } from "../interface"
 
 
-function createElement(
-  type: TReactElement.Type, 
-  props: TReactElement.Props, 
-  ...children: TReactElement.Jsx[]
-): TReactElement.Jsx{
+function createElement(type: JSX.Type, props: JSX.Props, ...children: JSX.Children): TReactElement.Jsx{
   return {
     type,
     props: {
@@ -27,7 +23,7 @@ function createTextElement(text: string | boolean): TReactElement.Jsx{
 }
 
 
-function Fragment(props: TReactElement.Props) {
+function Fragment(props: TReactElement.Props): TReactElement.Jsx[]{
   return props.children
 }
 

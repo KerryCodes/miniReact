@@ -51,7 +51,7 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
     case 'FunctionComponent':
       currentComponent= workInProgress
       //@ts-ignore
-      nextChildren = [workInProgress.type(workInProgress.pendingProps)].flat()
+      nextChildren = workInProgress.type(workInProgress.pendingProps)
       reconcileChildren(current, workInProgress, nextChildren)
       recoverIndex()
       break;
@@ -67,6 +67,95 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
     return workInProgress.child
   }
 }
+
+
+function bailoutOnAlreadyFinishedWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
+  return null
+}
+
+
+function reconcileChildren(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
+) {
+  if (current === null) {
+    // 对于mount的组件
+    workInProgress.child = mountChildFibers(workInProgress, nextChildren)
+  } else {
+    // 对于update的组件
+    workInProgress.child = reconcileChildFibers(workInProgress, current.child, nextChildren)
+  }
+}
+
+
+function mountChildFibers(
+  workInProgress: Fiber,
+  nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
+): Fiber | null {
+  let preFiber: Fiber
+  let workInProgressChild: Fiber = null
+  const children= Array.isArray(nextChildren) ? nextChildren : [nextChildren]
+
+  for (let i = 0; i < children.length; i++){
+    const element= children[i]
+    const tag= element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
+    const newFiber = new Fiber(tag, element)
+    if (tag !== 'FunctionComponent') {
+      newFiber.effectTag= 'PLACEMENT'
+    }
+    newFiber.return= workInProgress
+    if (i === 0) {
+      workInProgressChild= newFiber
+    } else {
+      preFiber.sibling= newFiber
+    }
+    preFiber = newFiber
+  }
+
+  return workInProgressChild
+}
+
+
+function reconcileChildFibers(
+  workInProgress: Fiber,
+  currentFirstChild: Fiber | null,
+  nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
+): Fiber | null {
+  let preFiber: Fiber
+  let workInProgressChild: Fiber = null
+  const children= Array.isArray(nextChildren) ? nextChildren : [nextChildren]
+
+  for (let i = 0; i < children.length; i++){
+    const element= children[i]
+    const tag= element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
+    const newFiber = {
+      ...currentFirstChild,
+      alternate: currentFirstChild,
+    }
+    currentFirstChild.alternate= newFiber
+    if (tag !== 'FunctionComponent') {
+      newFiber.effectTag= 'PLACEMENT'
+    }
+    newFiber.return= workInProgress
+    if (i === 0) {
+      workInProgressChild= newFiber
+    } else {
+      preFiber.sibling= newFiber
+    }
+    preFiber = newFiber
+    currentFirstChild= currentFirstChild.sibling
+  }
+
+  return workInProgressChild
+}
+
+
+function placeSingleChild(){}
+function reconcileSingleElement() { }
+function reconcileSingleTextNode() { }
+function reconcileChildrenArray(){}
+
 
 
 function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
@@ -105,60 +194,6 @@ function popHostContext(workInProgress: Fiber) { }
 function getRootHostContainer(){}
 
 
-function bailoutOnAlreadyFinishedWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
-  return null
-}
-
-
-function reconcileChildren(
-  current: Fiber | null,
-  workInProgress: Fiber,
-  nextChildren: TReactElement.Jsx[],
-) {
-  if (current === null) {
-    // 对于mount的组件
-    workInProgress.child = mountChildFibers(workInProgress, nextChildren)
-  } else {
-    // 对于update的组件
-    workInProgress.child = reconcileChildFibers(workInProgress, current?.child, nextChildren)
-  }
-}
-
-
-function mountChildFibers(
-  workInProgress: Fiber,
-  nextChildren: TReactElement.Jsx[],
-): Fiber | null {
-  let preFiber: Fiber
-  let workInProgressChild: Fiber = null
-
-  for (let i = 0; i < nextChildren?.length; i++){
-    const element= nextChildren[i]
-    const tag= element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
-    const newFiber = new Fiber(tag, element)
-    if (tag !== 'FunctionComponent') {
-      newFiber.effectTag= 'PLACEMENT'
-    }
-    newFiber.return= workInProgress
-    if (i === 0) {
-      workInProgressChild= newFiber
-    } else {
-      preFiber.sibling= newFiber
-    }
-    preFiber = newFiber
-  }
-
-  return workInProgressChild
-}
-
-
-function reconcileChildFibers(
-  workInProgress: Fiber,
-  currentFirstChild: Fiber | null,
-  nextChildren: any
-): Fiber | null {
-  return workInProgress.child
-}
 
 
 export { performUnitOfWork, currentComponent }

@@ -17,7 +17,7 @@ function commitWork(fiber: Fiber | null): TNode | null {
   }
   switch (fiber.effectTag) {
     case 'PLACEMENT':
-      let parentFiber= fiber.return
+      let parentFiber = fiber.return
       fiber.stateNode = ReactDOM.createDom(fiber)
       if (fiber.stateNode) {
         while (!parentFiber.stateNode) {

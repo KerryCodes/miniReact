@@ -23,7 +23,7 @@ function useState<T>(initialState: T) {
     currentComponent.memoizedState.push(initialState)
     currentComponent.dependencies.push([])
   }
-  const setState = (index: number, newState: T) => {
+  const setState = (index: number, currentComponent:any, newState: T) => {
     currentComponent.memoizedState[index] = newState
     rootFiberNode.rootFiberWorkInProgress = {
       ...rootFiberNode.current,
@@ -34,7 +34,7 @@ function useState<T>(initialState: T) {
     // performSyncWorkOnRoot()
   }
   //@ts-ignore
-  return [currentComponent.memoizedState[currentIndex], setState.bind(this, currentIndex)]
+  return [currentComponent.memoizedState[currentIndex], setState.bind(this, currentIndex, currentComponent)]
 }
 
 
