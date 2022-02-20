@@ -8,7 +8,7 @@ export function TestHookCom(props: TReact.Props){
   const [count, setCount]= useState(10)
 
   const onClick = (e: Event) => {
-    setCount(101)
+    setCount(Math.random())
     console.log('click:')
   }
 

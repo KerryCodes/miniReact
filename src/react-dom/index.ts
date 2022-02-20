@@ -56,7 +56,10 @@ function updateDom(current: Fiber, workInProgress: Fiber): TNode {
     const newValue = newAttributes[key]
     const oldValue = oldAttributes[key]
     if (isEvent(key)) {
-      newValue !== oldValue && dom.addEventListener(transferEventName(key), newValue)
+      if (newValue !== oldValue) {
+        dom.removeEventListener(transferEventName(key), oldValue)
+        dom.addEventListener(transferEventName(key), newValue)
+      }
     } else if (newValue !== oldValue) {
       //@ts-ignore
       dom[key]= newValue
