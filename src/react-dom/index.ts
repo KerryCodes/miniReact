@@ -1,7 +1,10 @@
 import { Fiber, rootFiberNode } from "../fiber";
 import { TNode, TReactElement } from "../interface";
-import { performConcurrentWorkOnRoot, performSyncWorkOnRoot } from "../renderer";
+import { performWorkOnRoot } from "../renderer";
 import { isEvent } from "../utils";
+
+
+let isConcurrentMode= false
 
 
 function createDom(fiber: Fiber): TNode {
@@ -49,18 +52,15 @@ function updateDom(current: Fiber, workInProgress: Fiber): TNode {
 }
 
 
-function render(element: TReactElement.Jsx, rootNode: Element, concurrent?: boolean){
+function render(element: TReactElement.Jsx, rootNode: Element, concurrent: boolean = false){
   const rootFiber = new Fiber('HostRoot', {
     type: 'div',
     props: { children: [element] },
   })
   rootFiber.stateNode = rootNode
   rootFiberNode.rootFiberWorkInProgress = rootFiber
-  if (concurrent) {
-    performConcurrentWorkOnRoot()
-  } else {
-    performSyncWorkOnRoot()
-  }
+  isConcurrentMode= concurrent
+  performWorkOnRoot()
 }
 
 
@@ -73,4 +73,4 @@ function createRoot(rootNode: Element){
 }
 
 
-export default { createDom, updateDom, render, createRoot }
+export default { isConcurrentMode, createDom, updateDom, render, createRoot }

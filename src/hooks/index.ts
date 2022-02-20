@@ -1,6 +1,6 @@
 import { Fiber, rootFiberNode } from "../fiber"
 import { currentComponent } from "../reconciler"
-import { performSyncWorkOnRoot, performConcurrentWorkOnRoot } from "../renderer"
+import { performWorkOnRoot } from "../renderer"
 
 
 let currentIndex= -1
@@ -25,14 +25,12 @@ function useState<T>(initialState: T) {
   }
   const setState = (index: number, currentComponent:any, newState: T) => {
     currentComponent.memoizedState[index] = newState
-    currentComponent.effectTag = 'UPDATE'
     rootFiberNode.rootFiberWorkInProgress = {
       ...rootFiberNode.current,
       alternate: rootFiberNode.current,
     }
     rootFiberNode.current.alternate= rootFiberNode.rootFiberWorkInProgress
-    performConcurrentWorkOnRoot()
-    // performSyncWorkOnRoot()
+    performWorkOnRoot()
   }
   //@ts-ignore
   return [currentComponent.memoizedState[currentIndex], setState.bind(this, currentIndex, currentComponent)]

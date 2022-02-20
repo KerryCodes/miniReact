@@ -2,9 +2,15 @@ import { commitRoot } from "../commit"
 import { Fiber, rootFiberNode } from "../fiber"
 import { performUnitOfWork } from "../reconciler"
 import { isMessageLooping, requestScheduleIdleCallback } from "../schedule"
+import ReactDOM from '../react-dom';
 
 
 let workInProgress: Fiber = null
+
+
+function performWorkOnRoot() {
+  ReactDOM.isConcurrentMode ? performConcurrentWorkOnRoot() : performSyncWorkOnRoot()
+}
 
 
 function performSyncWorkOnRoot() {
@@ -39,4 +45,4 @@ function workLoopConcurrent(deadline: IdleDeadline) {
 }
 
 
-export { workInProgress, performSyncWorkOnRoot, performConcurrentWorkOnRoot, workLoopSync, workLoopConcurrent }
+export { workInProgress, performWorkOnRoot, workLoopSync, workLoopConcurrent }

@@ -9,7 +9,7 @@ export function TestHookCom(props: TReact.Props){
 
   const onClick = (e: Event) => {
     setCount(101)
-    console.log('click:', count)
+    console.log('click:')
   }
 
   return <div {...attributes} onClick={onClick}>hook count: {count}</div>
