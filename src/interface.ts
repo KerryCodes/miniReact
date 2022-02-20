@@ -14,7 +14,7 @@ export namespace TReactElement {
   }
   
   export interface Props{
-    [key: string]: any,
+    [attribute: string]: any,
     children?: Jsx[],
   }
 }
@@ -22,13 +22,8 @@ export namespace TReactElement {
 
 export namespace TReact{
   export interface Props{
-    [key: string]: any,
-    child?: {
-      type: 'Fragment',
-      props: {
-        children: TReactElement.Jsx[],
-      },
-    },
+    [attribute: string]: any,
+    children?: TReactElement.Jsx[],
   }
 }
 

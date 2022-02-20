@@ -25,6 +25,7 @@ function commitWork(fiber: Fiber | null): TNode | null {
       parentFiber.stateNode.appendChild(fiber.stateNode)
       break;
     case "UPDATE":
+      ReactDOM.updateDom(fiber.alternate, fiber)
       break;
   }
   fiber.effectTag= null

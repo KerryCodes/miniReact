@@ -4,7 +4,7 @@ import { useState } from '../hooks'
 
 
 export function TestHookCom(props: TReact.Props){
-  const { children, ...rest } = props
+  const { children, ...attributes } = props
   const [count, setCount]= useState(10)
 
   const onClick = (e: Event) => {
@@ -12,5 +12,5 @@ export function TestHookCom(props: TReact.Props){
     console.log('click:', count)
   }
 
-  return <div {...rest} onClick={onClick}>hook count: {count}</div>
+  return <div {...attributes} onClick={onClick}>hook count: {count}</div>
 }

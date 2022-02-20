@@ -123,6 +123,7 @@ function reconcileChildFibers(
   currentFirstChild: Fiber | null,
   nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
 ): Fiber | null {
+  let oldFiber= currentFirstChild
   let preFiber: Fiber
   let workInProgressChild: Fiber = null
   const children= Array.isArray(nextChildren) ? nextChildren : [nextChildren]
@@ -136,26 +137,33 @@ function reconcileChildFibers(
   // }
 
   for (let i = 0; i < children.length; i++){
+    let newFiber: Fiber
     const element= children[i]
-    const tag= element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
-    const newFiber = workInProgress.effectTag === 'UPDATE' ? new Fiber(tag, element) : {
-      ...currentFirstChild,
-    }
-    newFiber.pendingProps= element.props
-    newFiber.stateNode = currentFirstChild.stateNode
-    newFiber.alternate= currentFirstChild,
-    currentFirstChild.alternate= newFiber
-    if (tag !== 'FunctionComponent') {
-      newFiber.effectTag= 'PLACEMENT'
+    const tag = element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
+    if (oldFiber.type === element.type) {
+      const { key, ...pendingProps } = element.props
+      newFiber = {
+        ...oldFiber,
+        pendingProps,
+        alternate: oldFiber,
+      }
+      if (tag !== 'FunctionComponent') {
+        newFiber.effectTag= 'UPDATE'
+      }
+    } else {
+      newFiber = new Fiber(tag, element) 
+      newFiber.alternate = oldFiber
+      newFiber.effectTag = 'PLACEMENT'
     }
     newFiber.return= workInProgress
+    oldFiber.alternate= newFiber
     if (i === 0) {
       workInProgressChild= newFiber
     } else {
       preFiber.sibling= newFiber
     }
     preFiber = newFiber
-    currentFirstChild= currentFirstChild.sibling
+    oldFiber= oldFiber.sibling
   }
 
   return workInProgressChild

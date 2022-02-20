@@ -24,7 +24,7 @@ class Fiber{
   index: number
   ref: any = null
   // 作为动态的工作单元的属性, 保存本次更新造成的状态改变相关信息
-  pendingProps: any
+  pendingProps: TReactElement.Props = {}
   memoizedProps: any
   updateQueue: any
   memoizedState: any[] = []

@@ -1,12 +1,12 @@
 import { Fiber, rootFiberNode } from "../fiber";
 import { TNode, TReactElement } from "../interface";
 import { performConcurrentWorkOnRoot, performSyncWorkOnRoot } from "../renderer";
+import { isEvent } from "../utils";
 
 
-function createDom(fiber: Fiber | TReactElement.Jsx) {
-  //@ts-ignore
-  const { type, pendingProps, props }= fiber
-  const { children, ...attributes }= pendingProps || props || {}
+function createDom(fiber: Fiber): TNode {
+  const { type, pendingProps }= fiber
+  const { children, ...attributes }= pendingProps
   let dom: TNode
 
   switch(type){
@@ -20,14 +20,29 @@ function createDom(fiber: Fiber | TReactElement.Jsx) {
       dom= document.createElement(type as string)
   }
 
-  Reflect.ownKeys(attributes).forEach(key => {
-    //@ts-ignore
-    if (key.startsWith('on')) {
-      //@ts-ignore
+  Object.keys(attributes).forEach(key => {
+    if (isEvent(key)) {
       dom.addEventListener(key.toLowerCase().substring(2), attributes[key])
     }
     //@ts-ignore
     dom[key]= attributes[key]
+  })
+
+  return dom
+}
+
+
+function updateDom(current: Fiber, workInProgress: Fiber): TNode {
+  const { children, ...oldAttributes } = current.pendingProps
+  const { children: newChildren, ...newAttributes } = workInProgress.pendingProps
+  const dom = workInProgress.stateNode
+
+  Object.keys(newAttributes).forEach(key => {
+    if (isEvent(key)) {
+      dom.addEventListener(key.toLowerCase().substring(2), newAttributes[key])
+    }
+    //@ts-ignore
+    dom[key]= newAttributes[key]
   })
 
   return dom
@@ -58,4 +73,4 @@ function createRoot(rootNode: Element){
 }
 
 
-export default { createDom, render, createRoot }
+export default { createDom, updateDom, render, createRoot }
