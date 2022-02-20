@@ -25,6 +25,7 @@ function useState<T>(initialState: T) {
   }
   const setState = (index: number, currentComponent:any, newState: T) => {
     currentComponent.memoizedState[index] = newState
+    currentComponent.effectTag = 'UPDATE'
     rootFiberNode.rootFiberWorkInProgress = {
       ...rootFiberNode.current,
       alternate: rootFiberNode.current,

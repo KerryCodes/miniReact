@@ -1,3 +1,4 @@
+import { reconcileChildrenArray, placeSingleChild, reconcileSingleTextNode } from "../diff";
 import { Fiber, rootFiberNode } from "../fiber"
 import { recoverIndex } from "../hooks";
 import { TReactElement } from "../interface";
@@ -126,13 +127,23 @@ function reconcileChildFibers(
   let workInProgressChild: Fiber = null
   const children= Array.isArray(nextChildren) ? nextChildren : [nextChildren]
 
+  // if (Array.isArray(nextChildren)) {
+  //   reconcileChildrenArray()
+  // } else if (nextChildren.type === 'TEXT_ELEMENT') {
+  //   reconcileSingleTextNode(currentFirstChild, nextChildren)
+  // } else {
+  //   placeSingleChild()
+  // }
+
   for (let i = 0; i < children.length; i++){
     const element= children[i]
     const tag= element.type instanceof Function ? 'FunctionComponent' : 'HostComponent'
-    const newFiber = {
+    const newFiber = workInProgress.effectTag === 'UPDATE' ? new Fiber(tag, element) : {
       ...currentFirstChild,
-      alternate: currentFirstChild,
     }
+    newFiber.pendingProps= element.props
+    newFiber.stateNode = currentFirstChild.stateNode
+    newFiber.alternate= currentFirstChild,
     currentFirstChild.alternate= newFiber
     if (tag !== 'FunctionComponent') {
       newFiber.effectTag= 'PLACEMENT'
@@ -149,13 +160,6 @@ function reconcileChildFibers(
 
   return workInProgressChild
 }
-
-
-function placeSingleChild(){}
-function reconcileSingleElement() { }
-function reconcileSingleTextNode() { }
-function reconcileChildrenArray(){}
-
 
 
 function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {

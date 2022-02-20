@@ -18,13 +18,11 @@ function commitWork(fiber: Fiber | null): TNode | null {
   switch (fiber.effectTag) {
     case 'PLACEMENT':
       let parentFiber = fiber.return
-      fiber.stateNode = ReactDOM.createDom(fiber)
-      if (fiber.stateNode) {
-        while (!parentFiber.stateNode) {
-          parentFiber= parentFiber.return
-        }
-        parentFiber.stateNode.appendChild(fiber.stateNode)
+      while (!parentFiber.stateNode) {
+        parentFiber= parentFiber.return
       }
+      fiber.stateNode = ReactDOM.createDom(fiber)
+      parentFiber.stateNode.appendChild(fiber.stateNode)
       break;
     case "UPDATE":
       break;

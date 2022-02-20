@@ -2,68 +2,16 @@ import { Fiber, rootFiberNode } from "../fiber";
 import { TEffect } from "../interface";
 
 
-// function diff(newFiber: Fiber) {
-  // const oldFiber= newFiber.alternate
-  // if (!oldFiber) {
-  //   newFiber.effectTag= "PLACEMENT"
-  // } else {
-  //   if (newFiber.type !== oldFiber.type) {
-  //     newFiber.effectTag= "PLACEMENT"
-  //   }
-  //   if (newFiber.type === oldFiber.type && newFiber.props !== oldFiber.props) {
-  //     newFiber.effectTag= "UPDATE"
-  //   }
-  //   if (false) {
-  //     newFiber.effectTag= "DELETION"
-  //   }
-  // }
+function placeSingleChild() { }
 
 
-  // const newEffect: TEffect= {
-  //   fiber: newFiber,
-  //   nextEffect: null,
-  // }
-  // if (!rootFiberNode.firstEffect) {
-  //   rootFiberNode.firstEffect = newEffect
-  //   rootFiberNode.currentEffect= newEffect
-  // } else {
-  //   rootFiberNode.currentEffect.nextEffect = newEffect
-  //   rootFiberNode.currentEffect= newEffect
-  
-  // }
-// }
+function reconcileSingleElement() { }
 
 
-function diff(newFiber: Fiber) {
-  const oldFiber= newFiber.alternate
-  if (!oldFiber) {
-    newFiber.effectTag= "PLACEMENT"
-  } else {
-    if (newFiber.type !== oldFiber.type) {
-      newFiber.effectTag= "PLACEMENT"
-    }
-    if (newFiber.type === oldFiber.type && newFiber.props !== oldFiber.props) {
-      newFiber.effectTag= "UPDATE"
-    }
-    if (false) {
-      newFiber.effectTag= "DELETION"
-    }
-  }
+function reconcileSingleTextNode() { }
 
 
-  const newEffect: TEffect= {
-    fiber: newFiber,
-    nextEffect: null,
-  }
-  if (!rootFiberNode.firstEffect) {
-    rootFiberNode.firstEffect = newEffect
-    rootFiberNode.currentEffect= newEffect
-  } else {
-    rootFiberNode.currentEffect.nextEffect = newEffect
-    rootFiberNode.currentEffect= newEffect
-  
-  }
-}
+function reconcileChildrenArray(){}
 
 
-export default diff
+export { placeSingleChild, reconcileSingleElement, reconcileSingleTextNode, reconcileChildrenArray}
