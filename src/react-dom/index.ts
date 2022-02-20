@@ -1,7 +1,7 @@
 import { Fiber, rootFiberNode } from "../fiber";
 import { TNode, TReactElement } from "../interface";
 import { performWorkOnRoot } from "../renderer";
-import { isEvent } from "../utils";
+import { isEvent, removeStaleProperty, transferEventName } from "../utils";
 
 
 let isConcurrentMode= false
@@ -24,11 +24,13 @@ function createDom(fiber: Fiber): TNode {
   }
 
   Object.keys(attributes).forEach(key => {
+    const value= attributes[key]
     if (isEvent(key)) {
-      dom.addEventListener(key.toLowerCase().substring(2), attributes[key])
+      dom.addEventListener(transferEventName(key), value)
+    } else {
+      //@ts-ignore
+      dom[key]= value
     }
-    //@ts-ignore
-    dom[key]= attributes[key]
   })
 
   return dom
@@ -40,12 +42,25 @@ function updateDom(current: Fiber, workInProgress: Fiber): TNode {
   const { children: newChildren, ...newAttributes } = workInProgress.pendingProps
   const dom = workInProgress.stateNode
 
-  Object.keys(newAttributes).forEach(key => {
-    if (isEvent(key)) {
-      dom.addEventListener(key.toLowerCase().substring(2), newAttributes[key])
+  // 去除过期的属性
+  Object.keys(oldAttributes).forEach(key => {
+    if (key in newAttributes) {
+      return;
+    } else {
+      removeStaleProperty(key, oldAttributes[key], dom)
     }
-    //@ts-ignore
-    dom[key]= newAttributes[key]
+  })
+
+  // 更新属性
+  Object.keys(newAttributes).forEach(key => {
+    const newValue = newAttributes[key]
+    const oldValue = oldAttributes[key]
+    if (isEvent(key)) {
+      newValue !== oldValue && dom.addEventListener(transferEventName(key), newValue)
+    } else if (newValue !== oldValue) {
+      //@ts-ignore
+      dom[key]= newValue
+    }
   })
 
   return dom

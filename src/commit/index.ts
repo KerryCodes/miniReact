@@ -12,9 +12,7 @@ function commitRoot() {
 
 
 function commitWork(fiber: Fiber | null): TNode | null {
-  if (fiber === null) {
-    return null
-  }
+  if (fiber === null) { return null }
   switch (fiber.effectTag) {
     case 'PLACEMENT':
       let parentFiber = fiber.return
