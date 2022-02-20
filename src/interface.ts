@@ -15,7 +15,7 @@ export namespace TReactElement {
   
   export interface Props{
     [key: string]: any,
-    children: Jsx[],
+    children?: Jsx[],
   }
 }
 

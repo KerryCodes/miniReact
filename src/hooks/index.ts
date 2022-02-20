@@ -18,8 +18,6 @@ function recoverIndex() {
 
 function useState<T>(initialState: T) {
   currentIndex++
-  // console.log(currentComponent);
-  
   if (rootFiberNode.current === null) {
     currentComponent.hooks.push('useState')
     currentComponent.memoizedState.push(initialState)
@@ -27,8 +25,6 @@ function useState<T>(initialState: T) {
   }
   const setState = (index: number, newState: T) => {
     currentComponent.memoizedState[index] = newState
-    console.log(index, newState, currentComponent);
-    
     rootFiberNode.rootFiberWorkInProgress = {
       ...rootFiberNode.current,
       alternate: rootFiberNode.current,

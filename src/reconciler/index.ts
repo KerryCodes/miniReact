@@ -41,7 +41,7 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
     didReceiveUpdate = false
   }
   
-  let nextChildren= workInProgress.pendingProps.children
+  let nextChildren = workInProgress.pendingProps.children.flat()
   // monet: 根据tag不同，创建不同的子Fiber节点
   switch (workInProgress.tag) {
     case 'HostRoot':
@@ -51,7 +51,7 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
     case 'FunctionComponent':
       currentComponent= workInProgress
       //@ts-ignore
-      nextChildren = [workInProgress.type(workInProgress.pendingProps)]
+      nextChildren = [workInProgress.type(workInProgress.pendingProps)].flat()
       reconcileChildren(current, workInProgress, nextChildren)
       recoverIndex()
       break;

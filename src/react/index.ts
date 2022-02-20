@@ -10,7 +10,7 @@ function createElement(
     type,
     props: {
       ...props,
-      children: children.flat().map(item => typeof item === "object" ? item : createTextElement(item)),
+      children: children.map(item => typeof item === "object" ? item : createTextElement(item)),
     },
   }
 }
@@ -27,4 +27,9 @@ function createTextElement(text: string | boolean): TReactElement.Jsx{
 }
 
 
-export default { createElement }
+function Fragment(props: TReactElement.Props) {
+  return props.children
+}
+
+
+export default { createElement, Fragment }

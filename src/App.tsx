@@ -1,5 +1,6 @@
 import './index.less'
 import React from './react'
+import { FragmentCom } from './test/FragmentCom'
 import { FunctionComponentA } from './test/FunctionComponentA'
 import { TestHookCom } from './test/TestHookCom'
 
@@ -27,13 +28,14 @@ export default function App(){
       <br />
       <strong>check br</strong>
       <br />
+      <FragmentCom />
       <div>1000 FunctionComponentA:</div>
       {
-        // Array(1000).fill(0).map(item => (
-        //   <FunctionComponentA className='aaa'>
-        //     <strong>world!</strong>
-        //   </FunctionComponentA>
-        // ))
+        Array(10).fill(0).map(item => (
+          <FunctionComponentA className='aaa'>
+            <strong>world!</strong>
+          </FunctionComponentA>
+        ))
       }
     </div>
   )
