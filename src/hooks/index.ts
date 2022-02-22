@@ -1,4 +1,4 @@
-import { Fiber, rootFiberNode } from "../fiber"
+import { rootFiberNode } from "../fiber"
 import { currentComponent } from "../reconciler"
 import { performWorkOnRoot } from "../renderer"
 

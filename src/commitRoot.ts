@@ -1,9 +1,9 @@
-import { Fiber, rootFiberNode } from '../fiber';
-import { TNode } from '../interface';
-import ReactDOM from '../react-dom';
+import { Fiber, rootFiberNode } from './fiber';
+import { TNode } from './interface';
+import ReactDOM from './ReactDOM';
 
 
-function commitRoot() {
+export function commitRoot() {
   commitWork(rootFiberNode.rootFiberWorkInProgress.child)
   rootFiberNode.current = rootFiberNode.rootFiberWorkInProgress
   rootFiberNode.rootFiberWorkInProgress= null
@@ -31,6 +31,3 @@ function commitWork(fiber: Fiber | null): TNode | null {
   commitWork(fiber.sibling)
   return fiber.stateNode
 }
-
-
-export { commitRoot }

@@ -1,13 +1,12 @@
-import { reconcileChildrenArray, placeSingleChild, reconcileSingleTextNode } from "../diff";
-import { Fiber, rootFiberNode } from "../fiber"
-import { recoverIndex } from "../hooks";
-import { TReactElement } from "../interface";
+import { reconcileChildrenArray, placeSingleChild, reconcileSingleTextNode } from "./diff";
+import { Fiber, rootFiberNode } from "./fiber"
+import { recoverIndex } from "./hooks";
 
 
-let currentComponent: Fiber
+export let currentComponent: Fiber
 
 
-function performUnitOfWork(workInProgress: Fiber) {
+export function performUnitOfWork(workInProgress: Fiber) {
    return beginWork(workInProgress.alternate, workInProgress)
 }
 
@@ -78,7 +77,7 @@ function bailoutOnAlreadyFinishedWork(current: Fiber | null, workInProgress: Fib
 function reconcileChildren(
   current: Fiber | null,
   workInProgress: Fiber,
-  nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
+  nextChildren: ReactElement.Jsx[] | ReactElement.Jsx
 ) {
   if (current === null) {
     // 对于mount的组件
@@ -92,7 +91,7 @@ function reconcileChildren(
 
 function mountChildFibers(
   workInProgress: Fiber,
-  nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
+  nextChildren: ReactElement.Jsx[] | ReactElement.Jsx
 ): Fiber | null {
   let preFiber: Fiber
   let workInProgressChild: Fiber = null
@@ -121,7 +120,7 @@ function mountChildFibers(
 function reconcileChildFibers(
   workInProgress: Fiber,
   currentFirstChild: Fiber | null,
-  nextChildren: TReactElement.Jsx[] | TReactElement.Jsx
+  nextChildren: ReactElement.Jsx[] | ReactElement.Jsx
 ): Fiber | null {
   let oldFiber= currentFirstChild
   let preFiber: Fiber
@@ -204,8 +203,3 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
 function popHostContext(workInProgress: Fiber) { }
 
 function getRootHostContainer(){}
-
-
-
-
-export { performUnitOfWork, currentComponent }

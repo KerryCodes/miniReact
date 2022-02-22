@@ -1,8 +1,7 @@
-import React from '../react'
-import { TReact } from '../interface'
+import React from '../React'
 
 
-export function FunctionComponentA(props: TReact.Props){
+export function FunctionComponentA(props: React.Props){
   const { children, ...attributes } = props
 
   const onClick = (e: Event) => {

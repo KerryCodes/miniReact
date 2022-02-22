@@ -1,9 +1,8 @@
-import React from '../react'
-import { TReact } from '../interface'
+import React from '../React'
 import { useState } from '../hooks'
 
 
-export function TestHookCom(props: TReact.Props){
+export function TestHookCom(props: React.Props){
   const { children, ...attributes } = props
   const [count, setCount]= useState(10)
 

@@ -1,16 +1,11 @@
-import { commitRoot } from "../commit"
-import { Fiber, rootFiberNode } from "../fiber"
-import { performUnitOfWork } from "../reconciler"
-import { isMessageLooping, requestScheduleIdleCallback } from "../schedule"
-import ReactDOM from '../react-dom';
+import { commitRoot } from "./commitRoot"
+import { Fiber, rootFiberNode } from "./fiber"
+import { performUnitOfWork } from "./reconciler"
+import { isMessageLooping, requestScheduleIdleCallback } from "./schedule"
+import ReactDOM from './ReactDOM';
 
 
-let workInProgress: Fiber = null
-
-
-function performWorkOnRoot() {
-  ReactDOM.isConcurrentMode ? performConcurrentWorkOnRoot() : performSyncWorkOnRoot()
-}
+export let workInProgress: Fiber = null
 
 
 function performSyncWorkOnRoot() {
@@ -27,8 +22,13 @@ function performConcurrentWorkOnRoot() {
 }
 
 
+export function performWorkOnRoot() {
+  ReactDOM.isConcurrentMode ? performConcurrentWorkOnRoot() : performSyncWorkOnRoot()
+}
+
+
 // performSyncWorkOnRoot会调用该方法
-function workLoopSync() {
+export function workLoopSync() {
   while (workInProgress !== null) {
     workInProgress= performUnitOfWork(workInProgress)
   }
@@ -37,12 +37,9 @@ function workLoopSync() {
 
 
 // performConcurrentWorkOnRoot会调用该方法
-function workLoopConcurrent(deadline: IdleDeadline) {
+export function workLoopConcurrent(deadline: IdleDeadline) {
   const shouldYield= () => deadline.timeRemaining() < 1
   while (workInProgress !== null && !shouldYield()) {
     workInProgress= performUnitOfWork(workInProgress)
   }
 }
-
-
-export { workInProgress, performWorkOnRoot, workLoopSync, workLoopConcurrent }

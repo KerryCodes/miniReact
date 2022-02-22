@@ -1,5 +1,5 @@
-import { commitRoot } from "../commit";
-import { workInProgress, workLoopConcurrent } from "../renderer";
+import { commitRoot } from "./commitRoot";
+import { workInProgress, workLoopConcurrent } from "./renderer";
 
 
 const YIELDINTERVAL= 5
@@ -15,8 +15,8 @@ const deadline= {
     return performance.now()
   }
 }
+export let isMessageLooping = false
 let hostCallback: (deadline: IdleDeadline) => void
-let isMessageLooping = false
 
 const channel = new MessageChannel()
 const schedulePerformWorkUntilDeadline= () => channel.port2.postMessage(null)
@@ -34,11 +34,8 @@ channel.port1.onmessage = e => {
 }
 
 
-function requestScheduleIdleCallback(workLoopConcurrent: (deadline: IdleDeadline) => void) {
+export function requestScheduleIdleCallback(workLoopConcurrent: (deadline: IdleDeadline) => void) {
   isMessageLooping = true
   hostCallback= workLoopConcurrent
   requestAnimationFrame(schedulePerformWorkUntilDeadline)
 }
-
-
-export { isMessageLooping, requestScheduleIdleCallback }

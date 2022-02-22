@@ -1,7 +1,7 @@
 /** @jsx React.createElement */
-import React from './react';
-import ReactDOM from './react-dom';
-import App from './App';
+import React from './React';
+import ReactDOM from './ReactDOM';
+import App from './components/App';
 
 
 const app = <App />

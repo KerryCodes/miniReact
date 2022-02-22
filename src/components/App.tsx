@@ -1,8 +1,8 @@
-import './index.less'
-import React from './react'
-import { FragmentCom } from './test/FragmentCom'
-import { FunctionComponentA } from './test/FunctionComponentA'
-import { TestHookCom } from './test/TestHookCom'
+import './App.less'
+import React from '../React'
+import { FragmentCom } from './FragmentCom'
+import { FunctionComponentA } from './FunctionComponentA'
+import { TestHookCom } from './TestHookCom'
 
 
 export default function App(){

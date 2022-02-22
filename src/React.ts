@@ -1,7 +1,4 @@
-import { TReactElement } from "../interface"
-
-
-function createElement(type: JSX.Type, props: JSX.Props, ...children: JSX.Children): TReactElement.Jsx{
+function createElement(type: JSX.Type, props: JSX.Props, ...children: JSX.Children): ReactElement.Jsx{
   return {
     type,
     props: {
@@ -12,7 +9,7 @@ function createElement(type: JSX.Type, props: JSX.Props, ...children: JSX.Childr
 }
 
 
-function createTextElement(text: string | boolean): TReactElement.Jsx{
+function createTextElement(text: string | boolean): ReactElement.Jsx{
   return {
     type: "TEXT_ELEMENT",
     props: {
@@ -23,7 +20,7 @@ function createTextElement(text: string | boolean): TReactElement.Jsx{
 }
 
 
-function Fragment(props: TReactElement.Props): TReactElement.Jsx[]{
+function Fragment(props: ReactElement.Props): ReactElement.Jsx[]{
   return props.children
 }
 

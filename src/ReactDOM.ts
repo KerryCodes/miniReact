@@ -1,7 +1,7 @@
-import { Fiber, rootFiberNode } from "../fiber";
-import { TNode, TReactElement } from "../interface";
-import { performWorkOnRoot } from "../renderer";
-import { isEvent, removeStaleProperty, transferEventName } from "../utils";
+import { Fiber, rootFiberNode } from "./fiber";
+import { TNode } from "./interface";
+import { performWorkOnRoot } from "./renderer";
+import { isEvent, removeStaleProperty, transferEventName } from "./utils";
 
 
 let isConcurrentMode= false
@@ -70,7 +70,7 @@ function updateDom(current: Fiber, workInProgress: Fiber): TNode {
 }
 
 
-function render(element: TReactElement.Jsx, rootNode: Element, concurrent: boolean = false){
+function render(element: ReactElement.Jsx, rootNode: Element, concurrent: boolean = false){
   const rootFiber = new Fiber('HostRoot', {
     type: 'div',
     props: { children: [element] },
@@ -84,7 +84,7 @@ function render(element: TReactElement.Jsx, rootNode: Element, concurrent: boole
 
 function createRoot(rootNode: Element){
   return {
-    render(element: TReactElement.Jsx) {
+    render(element: ReactElement.Jsx) {
       render(element, rootNode, true)
     }
   }
