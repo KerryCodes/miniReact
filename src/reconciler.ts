@@ -3,7 +3,7 @@ import { Fiber, rootFiberNode } from "./fiber"
 import { recoverIndex } from "./hooks";
 
 
-export let currentComponent: Fiber
+export let currentlyRenderingFiber: Fiber
 
 
 export function performUnitOfWork(workInProgress: Fiber) {
@@ -49,7 +49,7 @@ function beginWork(current: Fiber | null, workInProgress: Fiber): Fiber | null {
       reconcileChildren(current, workInProgress, nextChildren)
       break;
     case 'FunctionComponent':
-      currentComponent= workInProgress
+      currentlyRenderingFiber= workInProgress
       //@ts-ignore
       nextChildren = workInProgress.type(workInProgress.pendingProps)
       reconcileChildren(current, workInProgress, nextChildren)
