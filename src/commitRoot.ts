@@ -4,30 +4,30 @@ import ReactDOM from './ReactDOM';
 
 
 export function commitRoot() {
-  commitWork(rootFiberNode.rootFiberWorkInProgress.child)
-  rootFiberNode.current = rootFiberNode.rootFiberWorkInProgress
-  rootFiberNode.rootFiberWorkInProgress= null
+  const workInProgress= rootFiberNode.current.alternate.child
+  commitWork(workInProgress)
+  rootFiberNode.current = rootFiberNode.current.alternate
   console.log('rootFiberNode:', rootFiberNode)
 }
 
 
-function commitWork(fiber: Fiber | null): TNode | null {
-  if (fiber === null) { return null }
-  switch (fiber.effectTag) {
+function commitWork(workInProgress: Fiber | null): TNode | null {
+  if (workInProgress === null) { return null }
+  switch (workInProgress.effectTag) {
     case 'PLACEMENT':
-      let parentFiber = fiber.return
+      let parentFiber = workInProgress.return
       while (!parentFiber.stateNode) {
         parentFiber= parentFiber.return
       }
-      fiber.stateNode = ReactDOM.createDom(fiber)
-      parentFiber.stateNode.appendChild(fiber.stateNode)
+      workInProgress.stateNode = ReactDOM.createDom(workInProgress)
+      parentFiber.stateNode.appendChild(workInProgress.stateNode)
       break;
     case "UPDATE":
-      ReactDOM.updateDom(fiber.alternate, fiber)
+      ReactDOM.updateDom(workInProgress.alternate, workInProgress)
       break;
   }
-  fiber.effectTag= null
-  commitWork(fiber.child)
-  commitWork(fiber.sibling)
-  return fiber.stateNode
+  workInProgress.effectTag= null
+  commitWork(workInProgress.child)
+  commitWork(workInProgress.sibling)
+  return workInProgress.stateNode
 }

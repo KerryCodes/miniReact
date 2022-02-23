@@ -76,9 +76,11 @@ function render(element: ReactElement.Jsx, rootNode: Element, concurrent: boolea
     props: { children: [element] },
   })
   rootFiber.stateNode = rootNode
-  rootFiberNode.rootFiberWorkInProgress = rootFiber
+  rootFiberNode.current = {
+    alternate: rootFiber
+  }
   isConcurrentMode= concurrent
-  performWorkOnRoot()
+  performWorkOnRoot(rootFiber)
 }
 
 

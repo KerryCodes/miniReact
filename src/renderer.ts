@@ -9,20 +9,25 @@ export let workInProgress: Fiber = null
 
 
 function performSyncWorkOnRoot() {
-  workInProgress = rootFiberNode.rootFiberWorkInProgress
   workLoopSync()
 }
 
 
 function performConcurrentWorkOnRoot() {
   if (!isMessageLooping) {
-    workInProgress= rootFiberNode.rootFiberWorkInProgress
     requestScheduleIdleCallback(workLoopConcurrent)
   }
 }
 
 
-export function performWorkOnRoot() {
+export function performWorkOnRoot(rootFiber?: Fiber) {
+  if (rootFiber) {
+    workInProgress = rootFiber
+  } else {
+    workInProgress = { ...rootFiberNode.current }
+    workInProgress.alternate = rootFiberNode.current
+    rootFiberNode.current.alternate = workInProgress
+  }
   ReactDOM.isConcurrentMode ? performConcurrentWorkOnRoot() : performSyncWorkOnRoot()
 }
 

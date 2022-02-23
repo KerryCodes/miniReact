@@ -10,37 +10,10 @@ let firstWorkInProgressHook: Hook
 let workInProgressHook: Hook
 
 
-// function getHookState(index: number, type: 'useState' | 'useMemo' | 'useEffect') {
-//   currentlyRenderingFiber
-// }
-
-
 export function recoverIndex() {
   firstWorkInProgressHook = null
   workInProgressHook = null
 }
-
-
-// function useState<T>(initialState: T) {
-//   currentIndex++
-//   if (rootFiberNode.current === null) {
-//     currentlyRenderingFiber.hooks.push('useState')
-//     currentlyRenderingFiber.memoizedState.push(initialState)
-//     currentlyRenderingFiber.dependencies.push([])
-//   }
-//   const setState = (index: number, currentlyRenderingFiber:any, newState: T) => {
-//     currentlyRenderingFiber.memoizedState[index] = newState
-//     rootFiberNode.rootFiberWorkInProgress = {
-//       ...rootFiberNode.current,
-//       alternate: rootFiberNode.current,
-//     }
-//     rootFiberNode.current.alternate= rootFiberNode.rootFiberWorkInProgress
-//     performWorkOnRoot()
-//   }
-//   //@ts-ignore
-//   return [currentlyRenderingFiber.memoizedState[currentIndex], setState.bind(this, currentIndex, currentlyRenderingFiber)]
-// }
-
 
 
 // Mount 阶段Hooks的定义
@@ -102,6 +75,13 @@ export function dispatchAction(fiber: Fiber, queue: UpdateQueue, action: (pre: a
   }
   // 将表头保持在最新的update对象上
   queue.last = update
+  fiber.updateQueue = true
+  console.log(fiber.memoizedState);
+  
   // 进行调度工作
   performWorkOnRoot()
 }
+
+
+export * from './useState'
+export * from './useReducer'
